@@ -24,6 +24,11 @@
     --shadow-md:0 10px 28px rgba(15,31,61,.10);
     --shadow-lg:0 18px 50px rgba(15,31,61,.18);
     --radius:16px;
+    --light-blue:#eaf2ff;
+    --light-blue-2:#f4f8ff;
+    /* Подстройка положения плашки Digital относительно слова РЕГЛАМЕНТ */
+    --digital-shift-x:-.36rem;  /* «прижать» к букве Т */
+    --digital-shift-y:.03rem;   /* выровнять по нижней границе */
   }
 
   *{margin:0;padding:0;box-sizing:border-box}
@@ -39,10 +44,10 @@
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
 
-  /* ======= Fancy Header with FX (без изменения HTML) ======= */
+  /* ======= Header: сетка 2 колонки (слева заголовки, справа селект+поиск) ======= */
   .header{
     position:sticky; top:0; z-index:50;
-    padding:1.1rem 2rem 1.35rem;
+    padding:1rem 2rem 1rem;
     border-bottom:1px solid rgba(255,255,255,.12);
     color:#fff;
     background: linear-gradient(180deg, rgba(8,17,37,.55), rgba(8,17,37,.35)),
@@ -51,35 +56,48 @@
     backdrop-filter:saturate(1.15) blur(8px);
     box-shadow: var(--shadow-sm);
     overflow:hidden;
+
+    display:grid;
+    grid-template-columns: minmax(320px,1fr) minmax(360px,520px);
+    column-gap:1.25rem;
+    align-items:end;
   }
-  /* Светящиеся частицы */
+  /* фоновые частицы */
   .header::before,
-  .header::after{
-    content:""; position:absolute; inset:-50%; pointer-events:none; filter:blur(40px);
+  .header::after{ content:""; position:absolute; inset:-50%; pointer-events:none; filter:blur(40px);
     background: conic-gradient(from 0deg, rgba(59,130,246,.25), rgba(30,64,175,.12), rgba(59,130,246,.25));
-    animation: spin 30s linear infinite;
-    opacity:.35; transform: translateZ(0);
+    animation: spin 30s linear infinite; opacity:.3; transform: translateZ(0);
   }
-  .header::after{ animation-direction: reverse; opacity:.25 }
+  .header::after{ animation-direction: reverse; opacity:.22 }
   @keyframes spin{ to{ transform: rotate(360deg) } }
 
-  .header h1{
-    position:relative; z-index:1; text-shadow:0 1px 0 rgba(0,0,0,.2);
-    font-size:1.28rem; font-weight:800; letter-spacing:.2px; display:flex; align-items:center; gap:.55rem;
+  /* Левая колонка: РЕГЛАМЕНТ + Digital (вплотную), под ним РОССЕТИ КУБАНЬ */
+  .header-bar{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-start; gap:.2rem; margin:0 }
+  .title-left{ display:flex; align-items:flex-end; gap:0 }
+  .brand-title{ font-weight:900; letter-spacing:.6px; font-size:1.9rem; text-transform:uppercase; line-height:1; text-shadow:0 1px 0 rgba(0,0,0,.2) }
+  .badge-digital{ font-size:1.25rem; transform: translate(var(--digital-shift-x), var(--digital-shift-y)) scale(.7);
+    padding:.15rem .6rem; border-radius:999px; line-height:1.1; font-weight:700; letter-spacing:.3px;
+    background:rgba(255,255,255,.20); border:1px solid rgba(255,255,255,.38); color:#eaf2ff; box-shadow: inset 0 1px 0 rgba(255,255,255,.25)
   }
-  .header h1 span{
-    font-weight:700; opacity:.95; padding:.18rem .6rem; border-radius:999px;
-    background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.18);
+  .title-right{
+    text-transform:uppercase; font-weight:900; letter-spacing:.6px; font-size:1.9rem; line-height:1; text-shadow:0 1px 0 rgba(0,0,0,.2);
+    background: linear-gradient(90deg, rgba(255,255,255,.92), rgba(210,225,255,.95), rgba(255,255,255,.92));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    background-size:200% auto; animation: rightShine 7s linear infinite;
+    margin-top:.05rem; /* почти вплотную к РЕГЛАМЕНТ */
   }
+  @keyframes rightShine{ from{ background-position: -100% 0 } to{ background-position: 200% 0 } }
+  @media (prefers-reduced-motion: reduce){ .title-right{ animation:none } }
 
-  .controls{ position:relative; z-index:1; display:flex; gap:.6rem; flex-wrap:wrap; align-items:center }
+  /* Правая колонка: селект + поиск столбцом */
+  .controls{ position:relative; z-index:1; display:flex; flex-direction:column; gap:.5rem; align-items:stretch }
 
-  /* Поля ввода: компактные, с иконками */
   select, input[type="text"]{
-    appearance:none; padding:.55rem .8rem; border:1px solid rgba(255,255,255,.18);
+    appearance:none; padding:.5rem .8rem; border:1px solid rgba(255,255,255,.18);
     border-radius:12px; font-size:.92rem; color:#e5edff; background:rgba(255,255,255,.06);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 0 rgba(8,17,37,.25);
     transition:border-color .2s ease, box-shadow .2s ease, transform .06s ease, background .2s ease;
+    width:100%;
   }
   select:focus, input[type="text"]:focus{ outline:none; box-shadow:var(--ring); background:rgba(255,255,255,.10) }
   select:hover, input[type="text"]:hover{ transform:translateY(-1px) }
@@ -88,83 +106,64 @@
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23c7d2fe'><path d='M4 6l4 4 4-4z'/></svg>");
     background-repeat:no-repeat; background-position:right .6rem center; background-size:16px; padding-right:2rem; }
 
-  #searchInput{ flex:1; min-width:240px;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23c7d2fe' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
-    background-repeat:no-repeat; background-position:.6rem center; padding-left:2.2rem; }
+  .search-wrap{ position:relative }
+  #searchInput{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23c7d2fe' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>"); background-repeat:no-repeat; background-position:.6rem center; padding-left:2.2rem; padding-right:2.2rem }
+  #clearSearch{ position:absolute; top:50%; right:.35rem; transform:translateY(-50%); border:none; background:transparent; color:#c7d2fe; width:28px; height:28px; border-radius:8px; cursor:pointer; font-size:1.15rem; line-height:1; display:none }
+  #clearSearch:hover{ background:rgba(255,255,255,.14); color:#fff }
   ::placeholder{ color:#c7d2fe }
 
   /* ======= Контент ======= */
-  .container{ max-width:1200px; margin:1.25rem auto; padding:0 1.25rem }
+  .container{ max-width:1200px; margin:1.1rem auto; padding:0 1.25rem }
 
-  .section-card{
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-    margin-bottom:1rem; box-shadow:var(--shadow-sm);
-    transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease;
-  }
+  .section-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:.85rem; box-shadow:var(--shadow-sm); transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease }
   .section-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:#d8e0ee }
 
-  .section-header{
-    padding:.9rem 1rem; background:linear-gradient(180deg, var(--surface-2), var(--surface));
-    cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem;
-    border-bottom:1px solid var(--border); border-top-left-radius:var(--radius); border-top-right-radius:var(--radius);
-  }
+  /* Узкие «формы» заголовков + светло-голубой фон и серая полоска сверху */
+  .section-header{ position:relative; padding:.72rem .95rem; background:linear-gradient(180deg, var(--light-blue-2), var(--surface));
+    cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; border-bottom:1px solid var(--border); border-top-left-radius:14px; border-top-right-radius:14px; box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(15,31,61,.03) }
+  .section-header::before{ content:""; position:absolute; left:0; right:0; top:0; height:3px; background:#e5eaf1; border-top-left-radius:inherit; border-top-right-radius:inherit }
 
-  /* Синие кругляшки перед названием секции */
-  .section-title{
-    display:flex; align-items:center; gap:.6rem; font-size:1rem; font-weight:800; letter-spacing:.25px; color:var(--brand-700);
-  }
-  .section-title::before{
-    content:""; width:10px; height:10px; border-radius:50%;
-    background: radial-gradient(35% 35% at 30% 30%, #93c5fd, #3b82f6 60%, #1e3a8a);
-    box-shadow:0 0 0 4px rgba(59,130,246,.15), 0 0 12px rgba(59,130,246,.35);
-  }
+  /* Тёмно-синие МОНО-кружки (больше размер, без голубого ободка) */
+  .section-title{ display:flex; align-items:center; gap:.6rem; font-size:1rem; font-weight:800; letter-spacing:.25px; color:var(--brand-700) }
+  .section-title::before{ content:""; width:12px; height:12px; border-radius:50%; background:#0f1f3d }
 
   .section-arrow{ font-size:.95rem; color:#6b7280; transition: transform .2s ease, color .2s ease }
   .section-header:hover .section-arrow{ color:#374151 }
   .section-arrow.expanded{ transform:rotate(180deg) }
 
   /* Плавное раскрытие */
-  .section-content{ padding:0 1rem 1rem; max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease, opacity .25s ease, padding-top .2s ease }
-  .section-content.expanded{ padding:1rem; max-height:1500px; opacity:1 }
+  .section-content{ padding:0 .95rem .95rem; max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease, opacity .25s ease, padding-top .2s ease }
+  .section-content.expanded{ padding:.95rem; max-height:1500px; opacity:1 }
 
-  .algorithm-block{ margin-bottom:1rem }
+  .algorithm-block{ margin-bottom:.9rem }
   .algorithm-block:last-child{ margin-bottom:0 }
 
-  /* Кругляшок перед h4 */
-  .algorithm-block h4{ color:var(--brand-700); font-size:.96rem; font-weight:900; margin-bottom:.5rem; letter-spacing:.2px; display:flex; align-items:center; gap:.5rem }
-  .algorithm-block h4::before{
-    content:""; width:8px; height:8px; border-radius:50%; background:#1e3a8a; box-shadow:0 0 0 3px rgba(30,58,138,.15)
-  }
+  /* Кругляшок перед h4 — тёмно-синий моно, немного больше */
+  .algorithm-block h4{ color:var(--brand-700); font-size:.95rem; font-weight:900; margin-bottom:.48rem; letter-spacing:.2px; display:flex; align-items:center; gap:.5rem }
+  .algorithm-block h4::before{ content:""; width:10px; height:10px; border-radius:50%; background:#0f1f3d }
 
-  .algorithm-block p{ font-size:.95rem; color:#3c465a; margin:.3rem 0 }
-  .algorithm-block ul, .algorithm-block ol{ margin-left:1.25rem; margin-top:.35rem }
-  .algorithm-block li{ margin:.3rem 0; color:#475569; font-size:.95rem }
+  .algorithm-block p{ font-size:.94rem; color:#3c465a; margin:.28rem 0 }
+  .algorithm-block ul, .algorithm-block ol{ margin-left:1.15rem; margin-top:.3rem }
+  .algorithm-block li{ margin:.28rem 0; color:#475569; font-size:.94rem }
 
   code{ background:#0b12200a; border:1px solid #e6ebf1; padding:.15rem .35rem; border-radius:8px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace }
 
-  /* ======= Кнопки действий — компактные ======= */
-  .action-buttons{ display:flex; gap:.5rem; margin-top:.85rem; padding-top:.85rem; border-top:1px solid var(--border); flex-wrap:wrap }
-  .action-btn{
-    padding:.4rem .6rem; border:none; border-radius:10px; cursor:pointer;
-    font-size:.85rem; font-weight:800; letter-spacing:.2px; display:inline-flex; align-items:center; gap:.4rem;
-    transition: transform .06s ease, box-shadow .2s ease, background-color .2s ease; box-shadow:var(--shadow-sm)
-  }
-  .action-btn:focus{ outline:none; box-shadow:var(--ring), var(--shadow-sm) }
+  /* ======= Кнопки действий — упрощённые (без жирного и градиента) ======= */
+  .action-buttons{ display:flex; gap:.5rem; margin-top:.75rem; padding-top:.75rem; border-top:1px solid var(--border); flex-wrap:wrap }
+  .action-btn{ padding:.42rem .68rem; border:1px solid #e5eaf1; border-radius:10px; cursor:pointer; font-size:.86rem; font-weight:500; letter-spacing:.2px; display:inline-flex; align-items:center; gap:.4rem; transition: transform .06s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease }
   .action-btn:hover{ transform:translateY(-1px) }
+  .btn-primary{ background:#eef2ff; color:#0f1f3d }
+  .btn-primary:hover{ background:#dbe7ff; color:#0b1730 }
+  .btn-success{ background:#e8f7ec; color:#0f5132 }
+  .btn-success:hover{ background:#d3f0db; color:#063b23 }
+  .btn-secondary{ background:#f5f7fb; color:#374151 }
+  .btn-secondary:hover{ background:#e9eef8; color:#111827 }
 
-  .btn-primary{ background:linear-gradient(135deg, var(--brand), #1b2d59); color:#fff }
-  .btn-primary:hover{ background:linear-gradient(135deg, var(--brand-600), var(--brand)) }
-  .btn-success{ background:linear-gradient(135deg, #0e7a2e, #16a34a); color:#fff }
-  .btn-success:hover{ filter:brightness(.96) }
-  .btn-secondary{ background:linear-gradient(180deg,#f3f6fb,#eef2f7); color:#374151; border:1px solid #e5eaf1 }
-  .btn-secondary:hover{ background:#eef3f9 }
-
-  /* Плавающие кнопки */
+  /* Плавающие кнопки — оставляем только «Наверх» */
   .floating-buttons{ position:fixed; bottom:1.1rem; right:1.1rem; display:flex; flex-direction:column; gap:.55rem; z-index:1000 }
   .floating-btn{ background:linear-gradient(135deg, var(--brand), #1b2d59); color:#fff; border:none; padding:.8rem; border-radius:14px; width:50px; height:50px; cursor:pointer; box-shadow:var(--shadow-lg); transition: transform .08s ease, box-shadow .2s ease, filter .2s ease; font-size:.95rem; display:flex; align-items:center; justify-content:center }
   .floating-btn:hover{ transform:translateY(-2px); box-shadow:0 16px 40px rgba(15,31,61,.22); filter:saturate(1.05) }
 
-  /* Подсветка найденного */
   .highlight{ background:linear-gradient(180deg, rgba(59,130,246,.22), rgba(59,130,246,.12)); padding:1px 4px; border-radius:6px; box-decoration-break:clone }
 
   .no-results{ text-align:center; padding:2.2rem; color:#6b7280; font-size:1rem; position:relative }
@@ -178,47 +177,59 @@
   .close-modal:hover{ color:#1f2937; background:#f2f5f9 }
 
   /* Адаптив */
+  @media (max-width: 900px){
+    .header{ grid-template-columns: 1fr; row-gap:.75rem; align-items:stretch }
+    .controls{ order:2 }
+    .brand-title{ font-size:1.55rem }
+    .badge-digital{ font-size:1.05rem }
+    .title-right{ font-size:1.55rem }
+  }
   @media (max-width: 768px){
-    .header{ padding:.9rem 1.1rem 1rem }
-    .header h1{ font-size:1.05rem }
-    .controls{ flex-direction:column; gap:.55rem }
-    select, input[type="text"]{ width:100%; min-width:auto }
-    .section-header{ padding:.85rem 1rem }
+    .section-header{ padding:.68rem .9rem }
     .section-title{ font-size:.95rem }
-    .action-buttons{ flex-wrap:wrap }
-    .action-btn{ padding:.38rem .55rem; font-size:.82rem }
-    .floating-buttons{ bottom:1rem; right:1rem; gap:.5rem }
+    .action-btn{ padding:.36rem .52rem; font-size:.82rem }
     .floating-btn{ width:46px; height:46px; font-size:.9rem; border-radius:12px }
   }
 
   /* Тёмная тема (авто) */
   @media (prefers-color-scheme: dark){
-    :root{ --bg:#0b1220; --text:#e5e7eb; --muted:#9aa3b2; --surface:#0e1424; --surface-2:#0b1220; --border:#16223a }
+    :root{ --bg:#0b1220; --text:#e5e7eb; --muted:#9aa3b2; --surface:#0e1424; --surface-2:#0b1220; --border:#16223a; --light-blue:#0f1f3d; --light-blue-2:#0e1424 }
     .section-card{ border-color:#16223a }
-    .section-header{ background:linear-gradient(180deg,#0b1220,#0e1424); border-bottom-color:#16223a }
+    .section-header{ background:linear-gradient(180deg,var(--light-blue-2),#0e1424); border-bottom-color:#16223a }
+    .section-header::before{ background:#1f2a44 }
     .algorithm-block p, .algorithm-block li{ color:#cfd6df }
     code{ background:#0b1220; border-color:#16223a }
-    .btn-secondary{ background:linear-gradient(180deg,#0e1424,#0b1220); color:#cfd6df; border-color:#16223a }
+    .btn-secondary{ background:#131a2c; color:#cfd6df; border-color:#16223a }
     .modal-content{ border-color:#16223a }
   }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>РЕГЛАМЕТ-digital <span>• РОССЕТИ КУБАНЬ</span></h1>
+    <div class="header-bar">
+      <span class="title-left">
+        <span class="brand-title">РЕГЛАМЕНТ</span>
+        <span class="badge-digital">Digital</span>
+      </span>
+      <span class="title-right">РОССЕТИ КУБАНЬ</span>
+    </div>
     <div class="controls">
       <select id="reglamentSelect">
-        <option value="r057-2022">Р 057-2022 - Работа по выявлению неучтенного потребления</option>
+        <option value="r057-2022">Р 057-2022 - РЕГЛАМЕНТ ПО ВЫЯВЛЕНИЮ, СОКРАЩЕНИЮ И ИСКЛЮЧЕНИЮ БЕЗДОГОВОРНОГО И
+БЕЗУЧЕТНОГО ПОТРЕБЛЕНИЯ ЭЛЕКТРОЭНЕРГИИ</option>
         <option value="other" disabled>Другие регламенты (будут добавлены)</option>
       </select>
-      <input type="text" id="searchInput" placeholder="Поиск по ключевым словам..." />
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Поиск по ключевым словам..." />
+        <button id="clearSearch" aria-label="Очистить поиск">×</button>
+      </div>
     </div>
   </div>
 
   <div class="container" id="contentContainer"></div>
 
   <div class="floating-buttons">
-    <button class="floating-btn" id="collapseAllBtn" title="Свернуть все">▼</button>
+    <!-- Оставляем только кнопку Наверх -->
     <button class="floating-btn" id="scrollTopBtn" title="Наверх" style="display: none;">▲</button>
   </div>
 
@@ -259,17 +270,17 @@
 
     let expandedSections = new Set();
 
-    // ======= Нормализация строк для поиска (устойчиво к регистру, Ё/Е, пунктуации) =======
+    // ======= Нормализация строк для поиска =======
     function normalizeStr(s){
       return String(s)
         .toLowerCase()
         .replace(/ё/g,'е')
-        .replace(/[\s._(),\-–—\[\]{}:;!?"'`~+/\\]+/g,' ') // пунктуация -> пробел
-        .replace(/\s+/g,' ') // схлопываем пробелы
+        .replace(/[\s._(),\-–—\[\]{}:;!?"'`~+/\\]+/g,' ')
+        .replace(/\s+/g,' ')
         .trim();
     }
 
-    // ======= Глубокий поиск по объекту с нормализацией =======
+    // ======= Поиск по объекту =======
     function searchInObject(obj, termNorm){
       for (let key in obj){
         if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
@@ -288,15 +299,13 @@
       return false;
     }
 
-    // ======= Экранирование для RegExp (подсветка) =======
+    // ======= Экранирование и подсветка =======
     function escapeRegExp(str){ return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') }
-
-    // ======= Подсветка найденного (без ошибок, только для строк) =======
     function highlightText(text, searchTerm){
       if (!searchTerm || text == null || typeof text !== 'string') return text;
       const pattern = escapeRegExp(searchTerm);
       if (!pattern) return text;
-      const regex = new RegExp(`(${pattern})`, 'giu'); // Unicode, регистронезависимо
+      const regex = new RegExp(`(${pattern})`, 'giu');
       return text.replace(regex, '<span class="highlight">$1</span>');
     }
 
@@ -306,6 +315,10 @@
       const rawInput = document.getElementById('searchInput').value || '';
       const normTerm = normalizeStr(rawInput);
       const rawTerm = rawInput.trim();
+
+      // показать/скрыть крестик
+      const clearBtn = document.getElementById('clearSearch');
+      clearBtn.style.display = rawTerm ? 'block' : 'none';
 
       container.innerHTML = '';
       if (!algorithms[selectedReglament]){ container.innerHTML = '<div class="no-results">Регламент не найден</div>'; return; }
@@ -407,57 +420,35 @@
       else { expandedSections.add(sectionId); content.classList.add('expanded'); arrow.classList.add('expanded'); }
     }
 
-    function collapseAll(){ document.querySelectorAll('.section-content').forEach(c=>c.classList.remove('expanded')); document.querySelectorAll('.section-arrow').forEach(a=>a.classList.remove('expanded')); expandedSections.clear(); }
-
     function openSourceDocument(sectionId) {
-    const selectedReglament = document.getElementById('reglamentSelect').value;
-    const navMap = navigationMaps[selectedReglament];
-    
-    if (!navMap || !navMap.sections[sectionId]) {
-        alert('Раздел не найден в навигационной карте');
-        return;
-    }
-    
-    const page = navMap.sections[sectionId].page;
-    const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-    const pdfUrl = `${baseUrl}${navMap.docUrl}#page=${page}`;
-    
-    // Определяем мобильное устройство
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-        // Для мобильных показываем модальное окно
+      const selectedReglament = document.getElementById('reglamentSelect').value;
+      const navMap = navigationMaps[selectedReglament];
+      if (!navMap || !navMap.sections[sectionId]) { alert('Раздел не найден в навигационной карте'); return; }
+      const page = navMap.sections[sectionId].page;
+      const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+      const pdfUrl = `${baseUrl}${navMap.docUrl}#page=${page}`;
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
         const modal = document.getElementById('sourceModal');
         const sourceText = document.getElementById('sourceText');
-        
         sourceText.innerHTML = `
             <div style="text-align: center; padding: 20px;">
                 <h3 style="color: #0f1f3d; margin-bottom: 1rem;">Раздел ${navMap.sections[sectionId].section || page}</h3>
                 <p style="margin-bottom: 1.5rem;">Откройте документ и перейдите на страницу <strong>${page}</strong></p>
-                <a href="${baseUrl}${navMap.docUrl}" 
-                   class="action-btn btn-primary" 
-                   style="display: inline-block; text-decoration: none; padding: 0.75rem 1.5rem;"
-                   download>
-                    Скачать PDF
-                </a>
-                <button onclick="window.open('${baseUrl}${navMap.docUrl}', '_blank')" 
-                        class="action-btn btn-primary" 
-                        style="margin-left: 1rem; padding: 0.75rem 1.5rem;">
-                    Открыть PDF
-                </button>
+                <a href="${baseUrl}${navMap.docUrl}" class="action-btn btn-primary" style="display: inline-block; text-decoration: none; padding: 0.75rem 1.5rem;">Скачать PDF</a>
+                <button onclick="window.open('${baseUrl}${navMap.docUrl}', '_blank')" class="action-btn btn-primary" style="margin-left: 1rem; padding: 0.75rem 1.5rem;">Открыть PDF</button>
             </div>
         `;
-        
         modal.style.display = 'block';
-    } else {
-        // Для десктопа открываем с переходом на страницу
+      } else {
         window.open(pdfUrl, '_blank');
+      }
     }
-}
 
+    // Listeners
     document.getElementById('reglamentSelect').addEventListener('change', renderContent);
     document.getElementById('searchInput').addEventListener('input', renderContent);
-    document.getElementById('collapseAllBtn').addEventListener('click', collapseAll);
+    document.getElementById('clearSearch').addEventListener('click', () => { const i = document.getElementById('searchInput'); i.value = ''; i.focus(); renderContent(); });
     document.getElementById('scrollTopBtn').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     document.querySelector('.close-modal').addEventListener('click', () => document.getElementById('sourceModal').style.display = 'none');
     window.addEventListener('click', (e) => { const m = document.getElementById('sourceModal'); if (e.target === m) m.style.display = 'none'; });
@@ -469,6 +460,8 @@
       console.assert(t1, 'Поиск по "физ" должен находить раздел(ы).');
       const t2 = algorithms['r057-2022'].some(a => searchInObject(a, normalizeStr('рску')) || searchInObject(a, normalizeStr('рск')));
       console.assert(t2, 'Поиск по "РСК" должен находить упоминания.');
+      const t3 = algorithms['r057-2022'].some(a => searchInObject(a, normalizeStr('ФИЗ')));
+      console.assert(t3, 'Поиск по "ФИЗ" (в верхнем регистре) должен находить раздел(ы).');
     }
 
     renderContent();
