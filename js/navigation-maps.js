@@ -14,7 +14,7 @@ const navigationMaps = {
             'conducting-checks': { page: 20, section: '4.9' },
             'calculation-unaccounted': { page: 20, section: '4.10' },
             'calculation-unaccounted-phys': { page: 24, section: '4.11' },
-            'contractless-calculation': { page: 35, section: '4.12' },
+            'contractless-calculation': { page: 26, section: '4.12' },
             'meter-malfunction': { page: 40, section: '4.13' },
             'commission-review': { page: 45, section: '4.14' },
             'damage-compensation': { page: 50, section: '4.15' },
