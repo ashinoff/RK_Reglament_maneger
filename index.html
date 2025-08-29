@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Навигатор по регламентам ПАО "Россети Кубань"</title>
+    <title>РЕГЛАМЕНТ-digital, РОССЕТИ КУБАНЬ </title>
+    <script src="js/navigation-maps.js"></script>
     <style>
         * {
             margin: 0;
@@ -1139,18 +1140,23 @@
         }
 
         function openSourceDocument(sectionId) {
-            const modal = document.getElementById('sourceModal');
-            const sourceText = document.getElementById('sourceText');
-            
-            // Здесь будет логика загрузки соответствующего раздела из документа
-            sourceText.innerHTML = `
-                <p><strong>Раздел документа для: ${sectionId}</strong></p>
-                <p>Здесь будет отображаться соответствующий раздел из исходного регламента.</p>
-                <p>Функция будет реализована после интеграции с исходным документом.</p>
-            `;
-            
-            modal.style.display = 'block';
-        }
+    const selectedReglament = document.getElementById('reglamentSelect').value;
+    const navMap = navigationMaps[selectedReglament];
+    
+    if (!navMap || !navMap.sections[sectionId]) {
+        alert('Раздел не найден в навигационной карте');
+        return;
+    }
+    
+    const sectionNumber = navMap.sections[sectionId];
+    const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+    const docUrl = baseUrl + navMap.docUrl;
+    
+    // Открываем через Google Docs Viewer
+    const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(docUrl)}&embedded=true#:~:text=${encodeURIComponent(sectionNumber + '.')}`;
+    
+    window.open(viewerUrl, '_blank');
+}
 
         // Event listeners
         document.getElementById('reglamentSelect').addEventListener('change', renderContent);
