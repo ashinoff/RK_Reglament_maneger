@@ -1144,18 +1144,15 @@
     const navMap = navigationMaps[selectedReglament];
     
     if (!navMap || !navMap.sections[sectionId]) {
-        alert('Раздел не найден в навигационной карте');
+        alert('Раздел не найден');
         return;
     }
     
-    const sectionNumber = navMap.sections[sectionId];
+    const page = navMap.sections[sectionId].page;
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-    const docUrl = baseUrl + navMap.docUrl;
+    const pdfUrl = `${baseUrl}${navMap.docUrl}#page=${page}`;
     
-    // Открываем через Google Docs Viewer
-    const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(docUrl)}&embedded=true#:~:text=${encodeURIComponent(sectionNumber + '.')}`;
-    
-    window.open(viewerUrl, '_blank');
+    window.open(pdfUrl, '_blank');
 }
 
         // Event listeners
