@@ -419,39 +419,19 @@
     }
     
     const page = navMap.sections[sectionId].page;
-    const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-    const pdfUrl = `${baseUrl}${navMap.docUrl}#page=${page}`;
+    const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
+    const pdfUrl = `${baseUrl}${navMap.docUrl}`;
     
     // Определяем мобильное устройство
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
-        // Для мобильных показываем модальное окно
-        const modal = document.getElementById('sourceModal');
-        const sourceText = document.getElementById('sourceText');
-        
-        sourceText.innerHTML = `
-            <div style="text-align: center; padding: 20px;">
-                <h3 style="color: #0f1f3d; margin-bottom: 1rem;">Раздел ${navMap.sections[sectionId].section || page}</h3>
-                <p style="margin-bottom: 1.5rem;">Откройте документ и перейдите на страницу <strong>${page}</strong></p>
-                <a href="${baseUrl}${navMap.docUrl}" 
-                   class="action-btn btn-primary" 
-                   style="display: inline-block; text-decoration: none; padding: 0.75rem 1.5rem;"
-                   download>
-                    Скачать PDF
-                </a>
-                <button onclick="window.open('${baseUrl}${navMap.docUrl}', '_blank')" 
-                        class="action-btn btn-primary" 
-                        style="margin-left: 1rem; padding: 0.75rem 1.5rem;">
-                    Открыть PDF
-                </button>
-            </div>
-        `;
-        
-        modal.style.display = 'block';
+        // Для мобильных используем Google Docs Viewer
+        const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true#:~:text=page%20${page}`;
+        window.open(googleViewerUrl, '_blank');
     } else {
-        // Для десктопа открываем с переходом на страницу
-        window.open(pdfUrl, '_blank');
+        // Для десктопа - прямая ссылка с якорем
+        window.open(`${pdfUrl}#page=${page}`, '_blank');
     }
 }
 
