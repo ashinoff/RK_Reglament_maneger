@@ -12,21 +12,19 @@
     --brand-600:#0b1730;
     --brand-700:#081125;
     --accent:#1e40af;       /* насыщенный синий */
-    --glow:#3b82f6;         /* голубое свечение */
     --bg:#f7f9fc;           /* белый фон */
     --text:#0b1220;
     --muted:#6b7280;
     --surface:#ffffff;
     --surface-2:#f2f5fb;
     --border:#e6eaf2;
-    --ring:0 0 0 3px rgba(59,130,246,.25);
     --shadow-sm:0 4px 12px rgba(15,31,61,.06);
     --shadow-md:0 10px 28px rgba(15,31,61,.10);
     --shadow-lg:0 18px 50px rgba(15,31,61,.18);
     --radius:16px;
     --light-blue:#eaf2ff;
     --light-blue-2:#f4f8ff;
-    /* Подстройка положения плашки Digital относительно слова РЕГЛАМЕНТ */
+    /* Положение плашки Digital относительно РЕГЛАМЕНТ */
     --digital-shift-x:-.36rem;  /* «прижать» к букве Т */
     --digital-shift-y:.03rem;   /* выровнять по нижней границе */
   }
@@ -44,10 +42,10 @@
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
 
-  /* ======= Header: сетка 2 колонки (слева заголовки, справа селект+поиск) ======= */
+  /* ======= Header: сетка 2 колонки ======= */
   .header{
     position:sticky; top:0; z-index:50;
-    padding:1rem 2rem 1rem;
+    padding:.8rem 2rem 1rem; /* немного подняли верх */
     border-bottom:1px solid rgba(255,255,255,.12);
     color:#fff;
     background: linear-gradient(180deg, rgba(8,17,37,.55), rgba(8,17,37,.35)),
@@ -59,48 +57,49 @@
 
     display:grid;
     grid-template-columns: minmax(320px,1fr) minmax(360px,520px);
-    column-gap:1.25rem;
-    align-items:end;
+    column-gap:2cm;           /* отступ ~2 см до формы справа */
+    align-items:start;        /* выравниваем по верхнему краю */
   }
   /* фоновые частицы */
   .header::before,
   .header::after{ content:""; position:absolute; inset:-50%; pointer-events:none; filter:blur(40px);
-    background: conic-gradient(from 0deg, rgba(59,130,246,.25), rgba(30,64,175,.12), rgba(59,130,246,.25));
-    animation: spin 30s linear infinite; opacity:.3; transform: translateZ(0);
+    background: conic-gradient(from 0deg, rgba(15,31,61,.25), rgba(255,255,255,.18), rgba(15,31,61,.25));
+    animation: spin 30s linear infinite; opacity:.28; transform: translateZ(0);
   }
-  .header::after{ animation-direction: reverse; opacity:.22 }
+  .header::after{ animation-direction: reverse; opacity:.2 }
   @keyframes spin{ to{ transform: rotate(360deg) } }
 
   /* Левая колонка: РЕГЛАМЕНТ + Digital (вплотную), под ним РОССЕТИ КУБАНЬ */
-  .header-bar{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-start; gap:.2rem; margin:0 }
+  .header-bar{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-start; gap:.25rem; margin:0; margin-top:-.05rem }
   .title-left{ display:flex; align-items:flex-end; gap:0 }
   .brand-title{ font-weight:900; letter-spacing:.6px; font-size:1.9rem; text-transform:uppercase; line-height:1; text-shadow:0 1px 0 rgba(0,0,0,.2) }
   .badge-digital{ font-size:1.25rem; transform: translate(var(--digital-shift-x), var(--digital-shift-y)) scale(.7);
     padding:.15rem .6rem; border-radius:999px; line-height:1.1; font-weight:700; letter-spacing:.3px;
     background:rgba(255,255,255,.20); border:1px solid rgba(255,255,255,.38); color:#eaf2ff; box-shadow: inset 0 1px 0 rgba(255,255,255,.25)
   }
+  /* Переливающаяся надпись: тёмно-синий ↔ ярко-белый */
   .title-right{
     text-transform:uppercase; font-weight:900; letter-spacing:.6px; font-size:1.9rem; line-height:1; text-shadow:0 1px 0 rgba(0,0,0,.2);
-    background: linear-gradient(90deg, rgba(255,255,255,.92), rgba(210,225,255,.95), rgba(255,255,255,.92));
+    background: linear-gradient(90deg, #0f1f3d, #ffffff, #0f1f3d);
     -webkit-background-clip:text; background-clip:text; color:transparent;
-    background-size:200% auto; animation: rightShine 7s linear infinite;
-    margin-top:.05rem; /* почти вплотную к РЕГЛАМЕНТ */
+    background-size:200% auto; animation: rightShine 6s linear infinite; /* плавное переливание */
+    margin-top:.02rem; /* почти вплотную к РЕГЛАМЕНТ */
   }
   @keyframes rightShine{ from{ background-position: -100% 0 } to{ background-position: 200% 0 } }
   @media (prefers-reduced-motion: reduce){ .title-right{ animation:none } }
 
-  /* Правая колонка: селект + поиск столбцом */
+  /* Правая колонка: селект + поиск столбцом (пододвинули ближе) */
   .controls{ position:relative; z-index:1; display:flex; flex-direction:column; gap:.5rem; align-items:stretch }
 
+  /* Строгие монотонные формы: без подсветок и без «дёрганий» */
   select, input[type="text"]{
     appearance:none; padding:.5rem .8rem; border:1px solid rgba(255,255,255,.18);
     border-radius:12px; font-size:.92rem; color:#e5edff; background:rgba(255,255,255,.06);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 0 rgba(8,17,37,.25);
-    transition:border-color .2s ease, box-shadow .2s ease, transform .06s ease, background .2s ease;
-    width:100%;
+    box-shadow:none; width:100%; transition: background-color .15s ease, border-color .15s ease; /* без transform */
   }
-  select:focus, input[type="text"]:focus{ outline:none; box-shadow:var(--ring); background:rgba(255,255,255,.10) }
-  select:hover, input[type="text"]:hover{ transform:translateY(-1px) }
+  /* убрали подсвеченный ободок и изменение цвета на фокус */
+  select:focus, input[type="text"]:focus{ outline:none; border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.06); box-shadow:none }
+  select:hover, input[type="text"]:hover{ border-color:rgba(255,255,255,.24) }
 
   select{ min-width:280px; cursor:pointer;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23c7d2fe'><path d='M4 6l4 4 4-4z'/></svg>");
@@ -109,31 +108,31 @@
   .search-wrap{ position:relative }
   #searchInput{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23c7d2fe' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>"); background-repeat:no-repeat; background-position:.6rem center; padding-left:2.2rem; padding-right:2.2rem }
   #clearSearch{ position:absolute; top:50%; right:.35rem; transform:translateY(-50%); border:none; background:transparent; color:#c7d2fe; width:28px; height:28px; border-radius:8px; cursor:pointer; font-size:1.15rem; line-height:1; display:none }
-  #clearSearch:hover{ background:rgba(255,255,255,.14); color:#fff }
+  #clearSearch:hover{ color:#ffffff }
   ::placeholder{ color:#c7d2fe }
 
   /* ======= Контент ======= */
   .container{ max-width:1200px; margin:1.1rem auto; padding:0 1.25rem }
 
-  .section-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:.85rem; box-shadow:var(--shadow-sm); transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease }
-  .section-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:#d8e0ee }
+  .section-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:.85rem; box-shadow:var(--shadow-sm); transition: box-shadow .2s ease, border-color .2s ease }
+  .section-card:hover{ box-shadow:var(--shadow-md); border-color:#d8e0ee }
 
-  /* Узкие «формы» заголовков + светло-голубой фон и серая полоска сверху */
-  .section-header{ position:relative; padding:.72rem .95rem; background:linear-gradient(180deg, var(--light-blue-2), var(--surface));
+  /* Узкие «формы» заголовков + серая полоска сверху */
+  .section-header{ position:relative; padding:.56rem .85rem; background:linear-gradient(180deg, var(--light-blue-2), var(--surface));
     cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; border-bottom:1px solid var(--border); border-top-left-radius:14px; border-top-right-radius:14px; box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(15,31,61,.03) }
   .section-header::before{ content:""; position:absolute; left:0; right:0; top:0; height:3px; background:#e5eaf1; border-top-left-radius:inherit; border-top-right-radius:inherit }
 
-  /* Тёмно-синие МОНО-кружки (больше размер, без голубого ободка) */
+  /* Тёмно-синие МОНО-кружки (больше размер) */
   .section-title{ display:flex; align-items:center; gap:.6rem; font-size:1rem; font-weight:800; letter-spacing:.25px; color:var(--brand-700) }
   .section-title::before{ content:""; width:12px; height:12px; border-radius:50%; background:#0f1f3d }
 
-  .section-arrow{ font-size:.95rem; color:#6b7280; transition: transform .2s ease, color .2s ease }
-  .section-header:hover .section-arrow{ color:#374151 }
+  .section-arrow{ font-size:.95rem; color:#6b7280; transition: transform .2s ease, color .15s ease }
+  .section-header:hover .section-arrow{ color:#dc2626 } /* красим стрелку в красный при hover */
   .section-arrow.expanded{ transform:rotate(180deg) }
 
   /* Плавное раскрытие */
-  .section-content{ padding:0 .95rem .95rem; max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease, opacity .25s ease, padding-top .2s ease }
-  .section-content.expanded{ padding:.95rem; max-height:1500px; opacity:1 }
+  .section-content{ padding:0 .85rem .85rem; max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease, opacity .25s ease, padding-top .2s ease }
+  .section-content.expanded{ padding:.85rem; max-height:1500px; opacity:1 }
 
   .algorithm-block{ margin-bottom:.9rem }
   .algorithm-block:last-child{ margin-bottom:0 }
@@ -148,10 +147,10 @@
 
   code{ background:#0b12200a; border:1px solid #e6ebf1; padding:.15rem .35rem; border-radius:8px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace }
 
-  /* ======= Кнопки действий — упрощённые (без жирного и градиента) ======= */
+  /* ======= Кнопки действий — упрощённые, без «дёрганий» ======= */
   .action-buttons{ display:flex; gap:.5rem; margin-top:.75rem; padding-top:.75rem; border-top:1px solid var(--border); flex-wrap:wrap }
-  .action-btn{ padding:.42rem .68rem; border:1px solid #e5eaf1; border-radius:10px; cursor:pointer; font-size:.86rem; font-weight:500; letter-spacing:.2px; display:inline-flex; align-items:center; gap:.4rem; transition: transform .06s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease }
-  .action-btn:hover{ transform:translateY(-1px) }
+  .action-btn{ padding:.42rem .68rem; border:1px solid #e5eaf1; border-radius:10px; cursor:pointer; font-size:.86rem; font-weight:500; letter-spacing:.2px; display:inline-flex; align-items:center; gap:.4rem; transition: background-color .15s ease, color .15s ease, border-color .15s ease }
+  .action-btn:hover{ border-color:#d7deeb }
   .btn-primary{ background:#eef2ff; color:#0f1f3d }
   .btn-primary:hover{ background:#dbe7ff; color:#0b1730 }
   .btn-success{ background:#e8f7ec; color:#0f5132 }
@@ -159,7 +158,7 @@
   .btn-secondary{ background:#f5f7fb; color:#374151 }
   .btn-secondary:hover{ background:#e9eef8; color:#111827 }
 
-  /* Плавающие кнопки — оставляем только «Наверх» */
+  /* Плавающая кнопка — только «Наверх» */
   .floating-buttons{ position:fixed; bottom:1.1rem; right:1.1rem; display:flex; flex-direction:column; gap:.55rem; z-index:1000 }
   .floating-btn{ background:linear-gradient(135deg, var(--brand), #1b2d59); color:#fff; border:none; padding:.8rem; border-radius:14px; width:50px; height:50px; cursor:pointer; box-shadow:var(--shadow-lg); transition: transform .08s ease, box-shadow .2s ease, filter .2s ease; font-size:.95rem; display:flex; align-items:center; justify-content:center }
   .floating-btn:hover{ transform:translateY(-2px); box-shadow:0 16px 40px rgba(15,31,61,.22); filter:saturate(1.05) }
@@ -185,7 +184,7 @@
     .title-right{ font-size:1.55rem }
   }
   @media (max-width: 768px){
-    .section-header{ padding:.68rem .9rem }
+    .section-header{ padding:.5rem .8rem }
     .section-title{ font-size:.95rem }
     .action-btn{ padding:.36rem .52rem; font-size:.82rem }
     .floating-btn{ width:46px; height:46px; font-size:.9rem; border-radius:12px }
@@ -374,7 +373,7 @@
       if (algo.content.meterIntervention) content.appendChild(createBlock('При вмешательстве в прибор учета (п.81(11) ПП РФ №354):', algo.content.meterIntervention, rawTerm));
       if (algo.content.nonAdmission) content.appendChild(createBlock('При недопуске:', algo.content.nonAdmission, rawTerm));
       if (algo.content.pricing) content.appendChild(createBlock('Стоимость:', algo.content.pricing, rawTerm));
-      if (algo.content.important){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4 style="color:#b91c1c;">Важно:</h4><p><strong>${highlightText(algo.content.important, rawTerm)}</strong></p>`; content.appendChild(b); }
+      if (algo.content.important){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4 style=\"color:#b91c1c;\">Важно:</h4><p><strong>${highlightText(algo.content.important, rawTerm)}</strong></p>`; content.appendChild(b); }
       if (algo.content.recalculation) content.appendChild(createBlock('Перерасчет:', algo.content.recalculation, rawTerm));
       if (algo.content.composition) content.appendChild(createBlock('Состав:', algo.content.composition, rawTerm));
       if (algo.content.tasks) content.appendChild(createBlock('Задачи комиссии:', algo.content.tasks, rawTerm));
