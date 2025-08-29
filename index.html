@@ -851,6 +851,20 @@
                 content.appendChild(block);
             }
             
+            // Критерии риска
+            if (algo.content.riskCriteria) {
+                const block = createBlock('Критерии группы риска:', algo.content.riskCriteria, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // Рейды
+            if (algo.content.raids) {
+                const block = document.createElement('div');
+                block.className = 'algorithm-block';
+                block.innerHTML = `<h4>Рейды:</h4><p>${highlightText(algo.content.raids, searchTerm)}</p>`;
+                content.appendChild(block);
+            }
+            
             // Период расчета
             if (algo.content.period) {
                 const block = document.createElement('div');
@@ -890,9 +904,87 @@
                 content.appendChild(block);
             }
             
-            // Сроки
+            // Источники информации
+            if (algo.content.sources) {
+                const block = createBlock('Источники информации:', algo.content.sources, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // При несанкционированном подключении
+            if (algo.content.unauthorizedConnection) {
+                const block = createBlock('При несанкционированном подключении (п.62 ПП РФ №354):', algo.content.unauthorizedConnection, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // При вмешательстве в прибор учета
+            if (algo.content.meterIntervention) {
+                const block = createBlock('При вмешательстве в прибор учета (п.81(11) ПП РФ №354):', algo.content.meterIntervention, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // При недопуске
+            if (algo.content.nonAdmission) {
+                const block = createBlock('При недопуске:', algo.content.nonAdmission, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // Стоимость
+            if (algo.content.pricing) {
+                const block = createBlock('Стоимость:', algo.content.pricing, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // Важно
+            if (algo.content.important) {
+                const block = document.createElement('div');
+                block.className = 'algorithm-block';
+                block.innerHTML = `<h4 style="color: #dc3545;">Важно:</h4><p><strong>${highlightText(algo.content.important, searchTerm)}</strong></p>`;
+                content.appendChild(block);
+            }
+            
+            // Перерасчет
+            if (algo.content.recalculation) {
+                const block = createBlock('Перерасчет:', algo.content.recalculation, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // Состав
+            if (algo.content.composition) {
+                const block = createBlock('Состав:', algo.content.composition, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // Задачи комиссии
+            if (algo.content.tasks) {
+                const block = createBlock('Задачи комиссии:', algo.content.tasks, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // Сроки работы
             if (algo.content.timing) {
                 const block = createBlock('Сроки:', algo.content.timing, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // Структура
+            if (algo.content.structure) {
+                const block = createBlock('Структура комиссий:', algo.content.structure, searchTerm);
+                content.appendChild(block);
+            }
+            
+            // Консультации
+            if (algo.content.consultations) {
+                const block = document.createElement('div');
+                block.className = 'algorithm-block';
+                block.innerHTML = `<h4>Консультации:</h4><p>${highlightText(algo.content.consultations, searchTerm)}</p>`;
+                content.appendChild(block);
+            }
+            
+            // Документы (для протокола)
+            if (algo.content.documents && typeof algo.content.documents === 'string') {
+                const block = document.createElement('div');
+                block.className = 'algorithm-block';
+                block.innerHTML = `<h4>Документы:</h4><p>${highlightText(algo.content.documents, searchTerm)}</p>`;
                 content.appendChild(block);
             }
             
