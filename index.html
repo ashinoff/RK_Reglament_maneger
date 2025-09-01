@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Методика организации работы блока реализации и развития услуг</title>
+  <title>РЕГЛАМЕНТ-digital РОССЕТИ КУБАНЬ — предпросмотр</title>
   <script src="js/navigation-maps.js"></script>
   <style>
   /* ======= Design tokens (тёмно-синий + белый) ======= */
@@ -25,7 +25,8 @@
     --light-blue:#eaf2ff;
     --light-blue-2:#f4f8ff;
     /* Положение плашки Digital относительно РЕГЛАМЕНТ */
-    
+    --digital-shift-x:-.36rem;  /* «прижать» к букве Т */
+    --digital-shift-y:.03rem;   /* выровнять по нижней границе */
   }
 
   *{margin:0;padding:0;box-sizing:border-box}
@@ -72,7 +73,7 @@
   .header-bar{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-start; gap:.25rem; margin:0; margin-top:-.05rem }
   .title-left{ display:flex; align-items:flex-end; gap:0 }
   .brand-title{ font-weight:900; letter-spacing:.6px; font-size:1.9rem; text-transform:uppercase; line-height:1; text-shadow:0 1px 0 rgba(0,0,0,.2) }
-  
+  .badge-digital{ font-size:1.25rem; transform: translate(var(--digital-shift-x), var(--digital-shift-y)) scale(.7);
     padding:.15rem .6rem; border-radius:999px; line-height:1.1; font-weight:700; letter-spacing:.3px;
     background:rgba(255,255,255,.20); border:1px solid rgba(255,255,255,.38); color:#eaf2ff; box-shadow: inset 0 1px 0 rgba(255,255,255,.25)
   }
@@ -179,7 +180,7 @@
     .header{ grid-template-columns: 1fr; row-gap:.75rem; align-items:stretch }
     .controls{ order:2 }
     .brand-title{ font-size:1.55rem }
-    
+    .badge-digital{ font-size:1.05rem }
     .title-right{ font-size:1.55rem }
   }
   @media (max-width: 768px){
@@ -205,10 +206,12 @@
 <body>
   <div class="header">
     <div class="header-bar">
-  <span class="brand-title">Методика организации работы</span>
-  <span class="brand-subtitle">блока реализации и развития услуг</span>
-  <span class="title-right">РОССЕТИ КУБАНЬ</span>
-</div>
+      <span class="title-left">
+        <span class="brand-title">Методика организации работы блока реализации и развития услуг</span>
+        
+      </span>
+      <span class="title-right">РОССЕТИ КУБАНЬ</span>
+    </div>
     <div class="controls">
       <select id="reglamentSelect">
         <option value="r057-2022">Р 057-2022 - РЕГЛАМЕНТ ПО ВЫЯВЛЕНИЮ, СОКРАЩЕНИЮ И ИСКЛЮЧЕНИЮ БЕЗДОГОВОРНОГО И
