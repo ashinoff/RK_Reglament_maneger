@@ -16,7 +16,7 @@ const navigationMaps = {
       'calculation-unaccounted-phys': { page: 28, section: '4.11' },
       'contractless-calculation': { page: 31, section: '4.12' },
       'meter-malfunction': { page: 35, section: '4.13' },
-      'commission-review': { page: 40, section: '4.14' },
+      'commission-review': { page: 36, section: '4.14' },
       'damage-compensation': { page: 50, section: '4.15' },
       'cost-recovery': { page: 55, section: '4.16' },
       // при необходимости: поправь нумерацию ниже, если в PDF нет «дыры»
