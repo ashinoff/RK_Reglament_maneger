@@ -17,16 +17,16 @@ const navigationMaps = {
       'contractless-calculation': { page: 31, section: '4.12' },
       'meter-malfunction': { page: 35, section: '4.13' },
       'commission-review': { page: 36, section: '4.14' },
-      'damage-compensation': { page: 50, section: '4.15' },
-      'cost-recovery': { page: 55, section: '4.16' },
+      'damage-compensation': { page: 38, section: '4.15' },
+      'cost-recovery': { page: 40, section: '4.16' },
       // при необходимости: поправь нумерацию ниже, если в PDF нет «дыры»
-      'law-enforcement': { page: 60, section: '4.17' },   // было 4.18
-      'operational-control': { page: 65, section: '4.18' },// было 4.19
+      'law-enforcement': { page: 49, section: '4.17' },   // было 4.18
+      'operational-control': { page: 51, section: '4.18' },// было 4.19
 
       // новые разделы — их нет в исходном PDF, поэтому page=null
-      'acts-lifecycle': { page: null, section: '—' },
-      'acts-flow': { page: null, section: '—' },
-      'common-schemes': { page: null, section: '—' },
+      'acts-lifecycle': { page: 18, section: '—' },
+      'acts-flow': { page: 23, section: '—' },
+      'common-schemes': { page: 22, section: '—' },
     }
   }
 };
