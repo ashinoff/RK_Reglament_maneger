@@ -189,8 +189,8 @@
     color:var(--primary);
     opacity:0.3;
     font-size:0.875rem;
-    line-height:40px;
-    height:40px;
+    line-height:44px;
+    height:44px;
     display:flex;
     align-items:center;
   }
@@ -303,57 +303,6 @@
   #clearSearch:hover{
     transform:translateY(-50%) scale(1.1);
   }
-
-  /* Переключатель тем */
-  .theme-switcher{
-    position:fixed;
-    bottom:5rem;
-    right:1.5rem;
-    display:flex;
-    flex-direction:column;
-    gap:0.5rem;
-    z-index:90;
-  }
-
-  .theme-btn{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    border:3px solid white;
-    cursor:pointer;
-    transition:var(--transition);
-    box-shadow:var(--shadow);
-    position:relative;
-    overflow:hidden;
-  }
-
-  .theme-btn::after{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.2) 100%);
-    opacity:0;
-    transition:opacity 0.3s;
-  }
-
-  .theme-btn:hover{
-    transform:scale(1.15);
-    box-shadow:var(--shadow-hover);
-  }
-
-  .theme-btn:hover::after{
-    opacity:1;
-  }
-
-  .theme-btn.active{
-    transform:scale(1.2);
-    box-shadow:0 0 0 4px rgba(0,0,0,0.1);
-  }
-
-  .theme-btn[data-theme="default"]{background:linear-gradient(135deg, #8B1538, #E30613)}
-  .theme-btn[data-theme="energy"]{background:linear-gradient(135deg, #F39200, #E30613)}
-  .theme-btn[data-theme="purple"]{background:linear-gradient(135deg, #6B3AA0, #C8A2C8)}
-  .theme-btn[data-theme="ocean"]{background:linear-gradient(135deg, #1E3A8A, #06b6d4)}
 
   /* ======= Контент ======= */
   .container{
@@ -737,11 +686,17 @@
       <div class="brand-section">
         <h1 class="brand-title">МЕТОДИКА ОРГАНИЗАЦИИ РАБОТЫ БЛОКА РЕАЛИЗАЦИИ И РАЗВИТИЯ УСЛУГ</h1>
         <div class="brand-subtitle">РОССЕТИ КУБАНЬ</div>
+        <div class="theme-dots">
+          <div class="theme-dot active" data-theme="default" title="Классическая тема"></div>
+          <div class="theme-dot" data-theme="energy" title="Энергия"></div>
+          <div class="theme-dot" data-theme="purple" title="Фиолетовые сумерки"></div>
+          <div class="theme-dot" data-theme="ocean" title="Океан"></div>
+        </div>
       </div>
       <div class="controls">
         <div class="select-wrapper">
           <div class="marquee-container">
-            <div class="marquee-text">Выявление и сокращение потерь • Бездоговорное потребление • Безучетное потребление • Акты и протоколы</div>
+            <div class="marquee-text"></div>
           </div>
           <select id="reglamentSelect">
             <option value="r057-2022">Р 057-2022 - Регламент работы по выявлению, сокращению и исключению бездоговорного и безучетного потребления электроэнергии</option>
@@ -1113,8 +1068,23 @@
       localStorage.setItem('selectedTheme', theme);
     }
 
+    // Обновление бегущей строки
+    function updateMarqueeText() {
+      const select = document.getElementById('reglamentSelect');
+      const marqueeText = document.querySelector('.marquee-text');
+      if (!select || !marqueeText) return;
+      
+      const selectedOption = select.options[select.selectedIndex];
+      if (selectedOption) {
+        marqueeText.textContent = selectedOption.text;
+      }
+    }
+
     // Listeners
-    document.getElementById('reglamentSelect').addEventListener('change', renderContent);
+    document.getElementById('reglamentSelect').addEventListener('change', () => {
+      renderContent();
+      updateMarqueeText();
+    });
     document.getElementById('searchInput').addEventListener('input', renderContent);
     document.getElementById('clearSearch').addEventListener('click', () => { 
       const i = document.getElementById('searchInput'); 
@@ -1150,23 +1120,6 @@
       });
     });
 
-    // Бегущая строка для селекта
-    function initMarqueeSelect() {
-      const select = document.getElementById('reglamentSelect');
-      const marqueeDisplay = document.getElementById('marqueeDisplay');
-      const selectedOption = select.options[select.selectedIndex];
-      
-      if (selectedOption && marqueeDisplay) {
-        marqueeDisplay.innerHTML = `<span class="marquee-content">${selectedOption.text}</span><span class="marquee-content">${selectedOption.text}</span>`;
-      }
-    }
-
-    // Инициализация бегущей строки при изменении выбора
-    const selectElement = document.getElementById('reglamentSelect');
-    if (selectElement) {
-      selectElement.addEventListener('change', initMarqueeSelect);
-    }
-
     // Загрузка сохраненной темы
     const savedTheme = localStorage.getItem('selectedTheme') || 'default';
     switchTheme(savedTheme);
@@ -1175,7 +1128,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       renderContent();
       updateCollapseButton();
-      initMarqueeSelect();
+      updateMarqueeText();
     });
 
     // Если DOM уже загружен
@@ -1183,12 +1136,12 @@
       document.addEventListener('DOMContentLoaded', () => {
         renderContent();
         updateCollapseButton();
-        initMarqueeSelect();
+        updateMarqueeText();
       });
     } else {
       renderContent();
       updateCollapseButton();
-      initMarqueeSelect();
+      updateMarqueeText();
     }
   </script>
 </body>
