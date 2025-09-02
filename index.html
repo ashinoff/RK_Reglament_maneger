@@ -172,28 +172,7 @@
     box-shadow:var(--shadow-hover);
   }
 
-  .marquee-container{
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    pointer-events:none;
-    overflow:hidden;
-  }
-
-  .marquee-text{
-    position:absolute;
-    white-space:nowrap;
-    animation:marquee 20s linear infinite;
-    color:var(--primary);
-    opacity:0.3;
-    font-size:0.875rem;
-    line-height:44px;
-    height:44px;
-    display:flex;
-    align-items:center;
-  }
+  /* Убрана бегущая строка-призрак */
 
   @keyframes marquee{
     from{transform:translateX(100%)}
@@ -695,9 +674,6 @@
       </div>
       <div class="controls">
         <div class="select-wrapper">
-          <div class="marquee-container">
-            <div class="marquee-text"></div>
-          </div>
           <select id="reglamentSelect">
             <option value="r057-2022">Р 057-2022 - Регламент работы по выявлению, сокращению и исключению бездоговорного и безучетного потребления электроэнергии</option>
             <option value="other" disabled>Другие регламенты (в разработке)</option>
@@ -1068,23 +1044,8 @@
       localStorage.setItem('selectedTheme', theme);
     }
 
-    // Обновление бегущей строки
-    function updateMarqueeText() {
-      const select = document.getElementById('reglamentSelect');
-      const marqueeText = document.querySelector('.marquee-text');
-      if (!select || !marqueeText) return;
-      
-      const selectedOption = select.options[select.selectedIndex];
-      if (selectedOption) {
-        marqueeText.textContent = selectedOption.text;
-      }
-    }
-
     // Listeners
-    document.getElementById('reglamentSelect').addEventListener('change', () => {
-      renderContent();
-      updateMarqueeText();
-    });
+    document.getElementById('reglamentSelect').addEventListener('change', renderContent);
     document.getElementById('searchInput').addEventListener('input', renderContent);
     document.getElementById('clearSearch').addEventListener('click', () => { 
       const i = document.getElementById('searchInput'); 
@@ -1128,7 +1089,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       renderContent();
       updateCollapseButton();
-      updateMarqueeText();
     });
 
     // Если DOM уже загружен
@@ -1136,12 +1096,10 @@
       document.addEventListener('DOMContentLoaded', () => {
         renderContent();
         updateCollapseButton();
-        updateMarqueeText();
       });
     } else {
       renderContent();
       updateCollapseButton();
-      updateMarqueeText();
     }
   </script>
 </body>
