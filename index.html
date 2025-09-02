@@ -1,48 +1,50 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="violet">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>РЕГЛАМЕНТ-digital РОССЕТИ КУБАНЬ — предпросмотр (v2, soft)</title>
+  <title>РЕГЛАМЕНТ-digital — предпросмотр (две темы)</title>
   <script>
-    // Безопасный заглушечный объект навигации, чтобы превью не падало,
-    // если js/navigation-maps.js отсутствует в предпросмотре
+    // Фоллбек навигации для превью (если внешний js недоступен)
     window.navigationMaps = window.navigationMaps || {
-      'r057-2022': {
-        docUrl: '/regulations/r057-2022/source.pdf',
-        sections: {}
-      }
+      'r057-2022': { docUrl: '/regulations/r057-2022/source.pdf', sections: {} }
     };
   </script>
   <style>
-  /* ======= Design tokens (мягче и «воздушнее») ======= */
+  /* ======= Нейтральные токены и базовая механика ======= */
   :root{
-    --brand:#324762;        /* мягкий сизый */
-    --brand-600:#2b3e58;
-    --brand-700:#24364a;
-    --accent:#7aa2ff;       /* СМЕНИТЬ цвет верхней полоски тут */
-    --accent-2:#8de3ef;     /* и тут — градиент полоски */
-    --bg:#f7f9fc;
-    --text:#0b1220;
-    --muted:#6b7280;
-    --surface:#ffffff;
-    --surface-2:#f2f5fb;
-    --border:#e6eaf2;
+    /* Нейтрали */
+    --bg:#faf9fc; --text:#0b1220; --muted:#6b7280;
+    --surface:#ffffff; --surface-2:#f6f2f9; --border:#e7eaf0;
     --shadow-sm:0 4px 12px rgba(15,31,61,.06);
     --shadow-md:0 10px 28px rgba(15,31,61,.10);
     --shadow-lg:0 18px 50px rgba(15,31,61,.18);
     --radius:16px;
-    --light-blue:#edf3ff;
-    --light-blue-2:#f6f9ff;
+    --light-blue-2:#f6f9ff; /* мягкий фон хэдера */
 
-    --pink:#ec4899;
-    --pink-50:#fff7fb;
-    --pink-100:#fde4f2;
-    --pink-200:#fbcfe8;
+    /* Управление полоской над карточками */
+    --divider:#e7eaf0;      /* цвет линии */
+    --strip-height:2px;     /* 0px — полностью убрать */
 
-    /* Положение плашки Digital относительно РЕГЛАМЕНТ */
-    --digital-shift-x:-.36rem;
-    --digital-shift-y:.03rem;
+    /* Подсветка карточек */
+    --card-hover:#f5effa;
+  }
+
+  /* ======= Тема 1: Фиолетовый + Оранжевый ======= */
+  :root,[data-theme="violet"]{
+    --brand:#531c8d; --brand-600:#4a197f; --brand-700:#3e146f;
+    --accent:#d37737;         /* оранжевый CTA */
+    --accent-2:#c7a9ce;       /* лаванда — мягкие акценты */
+    --danger:#9a2328;         /* красный для ошибок */
+  }
+
+  /* ======= Тема 2: Бордо + Оранжевый ======= */
+  [data-theme="bordeaux"]{
+    --brand:#74081b; --brand-600:#640718; --brand-700:#4e0613;
+    --accent:#d37737;         /* оранжевый CTA */
+    --accent-2:#531c8d;       /* фиолетовый вторичный */
+    --danger:#9a2328;
+    --card-hover:#f8eef0;     /* розовато-бордовая подсветка */
   }
 
   *{margin:0;padding:0;box-sizing:border-box}
@@ -51,153 +53,92 @@
   body{
     font-family:Inter, -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
     background:
-      radial-gradient(1200px 700px at -10% -20%, rgba(122,162,255,.12), transparent 60%),
-      radial-gradient(1200px 700px at 110% -10%, rgba(141,227,239,.12), transparent 60%),
+      radial-gradient(1200px 700px at -10% -20%, rgba(211,119,55,.10), transparent 60%),
+      radial-gradient(1200px 700px at 110% -10%, rgba(83,28,141,.10), transparent 60%),
       var(--bg);
     color:var(--text);
     line-height:1.55;
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
 
-  /* ======= Header: сетка 2 колонки (помягче фон) ======= */
+  /* ======= Header ======= */
   .header{
     position:sticky; top:0; z-index:50;
-    padding:.8rem 2rem 1rem;
-    border-bottom:1px solid rgba(0,0,0,.06);
+    padding:.8rem 2rem 1rem; border-bottom:1px solid rgba(0,0,0,.06);
     color:#102033;
     background:
       linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.85)),
-      radial-gradient(1000px 300px at 20% -40%, rgba(122,162,255,.18), transparent 60%),
-      linear-gradient(135deg, #f6f9ff, #eef4ff);
+      radial-gradient(1000px 300px at 20% -40%, rgba(199,169,206,.18), transparent 60%),
+      linear-gradient(135deg, #f6f9ff, #fff);
     backdrop-filter:saturate(1.1) blur(6px);
     box-shadow: var(--shadow-sm);
-    overflow:hidden;
-
-    display:grid;
-    grid-template-columns: minmax(320px,1fr) minmax(360px,520px);
-    column-gap:2cm;
-    align-items:start;
+    display:grid; grid-template-columns:minmax(320px,1fr) minmax(360px,520px);
+    column-gap:2cm; align-items:start; overflow:hidden;
   }
-  .header::before,
-  .header::after{
-    content:""; position:absolute; inset:-50%; pointer-events:none; filter:blur(40px);
-    background: conic-gradient(from 0deg, rgba(50,71,98,.15), rgba(255,255,255,.18), rgba(50,71,98,.15));
-    animation: spin 30s linear infinite; opacity:.22; transform: translateZ(0);
-  }
-  .header::after{ animation-direction: reverse; opacity:.16 }
-  @keyframes spin{ to{ transform: rotate(360deg) } }
-
-  .header-bar{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-start; gap:.25rem; margin:0; margin-top:-.05rem }
-  .title-left{ display:flex; align-items:flex-end; gap:0 }
-  .brand-title{ font-weight:900; letter-spacing:.4px; font-size:1.45rem; text-transform:uppercase; line-height:1; color:#1f2f44 }
-  .badge-digital{
-    font-size:1.1rem; transform: translate(var(--digital-shift-x), var(--digital-shift-y)) scale(.7);
-    padding:.15rem .6rem; border-radius:999px; line-height:1.1; font-weight:700; letter-spacing:.3px;
-    background:rgba(122,162,255,.15); border:1px solid rgba(122,162,255,.35); color:#2a4780;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.6)
-  }
-  .title-right{
-    text-transform:uppercase; font-weight:900; letter-spacing:.5px; font-size:1.45rem; line-height:1;
-    background: linear-gradient(90deg, #2a3c5e, #6c7aa6, #2a3c5e);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    background-size:200% auto; animation: rightShine 8s linear infinite;
-    margin-top:.02rem;
-  }
+  .header-bar{ position:relative; z-index:1; display:flex; flex-direction:column; gap:.25rem }
+  .brand-title{ font-weight:900; letter-spacing:.4px; font-size:1.38rem; text-transform:uppercase; color:#1f2f44 }
+  .title-right{ text-transform:uppercase; font-weight:900; letter-spacing:.5px; font-size:1.38rem; line-height:1;
+    background: linear-gradient(90deg, var(--brand), var(--accent-2), var(--brand));
+    -webkit-background-clip:text; background-clip:text; color:transparent; background-size:200% auto; animation:rightShine 8s linear infinite }
   @keyframes rightShine{ from{ background-position: -100% 0 } to{ background-position: 200% 0 } }
-  @media (prefers-reduced-motion: reduce){ .title-right{ animation:none } }
 
-  /* Правая колонка: селект + поиск */
-  .controls{ position:relative; z-index:1; display:flex; flex-direction:column; gap:.5rem; align-items:stretch }
+  .controls{ position:relative; z-index:1; display:flex; flex-direction:column; gap:.5rem }
 
-  /* Обёртка для селекта с бегущей строкой */
+  /* Theme switch (две кнопки) */
+  .theme-switch{ display:flex; gap:.4rem; align-items:center; margin-bottom:.1rem }
+  .theme-btn{ padding:.36rem .6rem; border:1px solid var(--border); background:#fff; border-radius:10px; cursor:pointer; font-size:.84rem; color:#374151 }
+  .theme-btn.active{ background:var(--surface-2); border-color:#d8cdea }
+
+  /* Select + search */
   .select-wrap{ position:relative }
-  .select-marquee{
-    position:absolute; left:.8rem; right:2.1rem; top:50%; transform:translateY(-50%);
-    pointer-events:none; white-space:nowrap; overflow:hidden;
-    color:#21324a; font-size:.92rem;
-    mask-image: linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 22px), transparent 100%);
-  }
-  .select-marquee .marquee-track{ display:inline-block; padding-left:100%; animation: marquee 12s linear infinite }
-  .select-marquee .marquee-track:hover{ animation-play-state: paused }
-  @keyframes marquee{ from{ transform: translateX(0) } to{ transform: translateX(-100%) } }
+  .select-marquee{ position:absolute; left:.8rem; right:2.1rem; top:50%; transform:translateY(-50%);
+    pointer-events:none; white-space:nowrap; overflow:hidden; color:#21324a; font-size:.92rem;
+    mask-image:linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 22px), transparent 100%)}
+  .select-marquee .marquee-track{ display:inline-block; padding-left:100%; animation:marquee 12s linear infinite }
+  .select-marquee .marquee-track:hover{ animation-play-state:paused }
+  @keyframes marquee{ from{ transform:translateX(0) } to{ transform:translateX(-100%) } }
 
-  select, input[type="text"]{
-    appearance:none; padding:.5rem .8rem; border:1px solid rgba(32,49,74,.12);
-    border-radius:12px; font-size:.92rem; color:#21324a; background:#ffffffa8;
-    box-shadow:none; width:100%; transition: background-color .15s ease, border-color .15s ease;
-  }
+  select, input[type="text"]{ appearance:none; padding:.5rem .8rem; border:1px solid rgba(32,49,74,.12);
+    border-radius:12px; font-size:.92rem; color:#21324a; background:#ffffffa8; box-shadow:none; width:100%;
+    transition: background-color .15s ease, border-color .15s ease }
   select:focus, input[type="text"]:focus{ outline:none; border-color:rgba(32,49,74,.22); background:#fff }
   select:hover, input[type="text"]:hover{ border-color:rgba(32,49,74,.28) }
-
-  /* когда включена бегущая строка — скрываем текст селекта */
   select.marquee-active{ color:transparent; text-shadow:none }
-
-  select{ min-width:280px; cursor:pointer;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2321324a'><path d='M4 6l4 4 4-4z'/></svg>");
-    background-repeat:no-repeat; background-position:right .6rem center; background-size:16px; padding-right:2rem; }
+  select{ min-width:280px; cursor:pointer; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2321324a'><path d='M4 6l4 4 4-4z'/></svg>"); background-repeat:no-repeat; background-position:right .6rem center; background-size:16px; padding-right:2rem }
 
   .search-wrap{ position:relative }
-  #searchInput{
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2321324a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
-    background-repeat:no-repeat; background-position:.6rem center; padding-left:2.2rem; padding-right:2.2rem
-  }
-  #clearSearch{
-    position:absolute; top:50%; right:.35rem; transform:translateY(-50%);
-    border:none; background:transparent; color:#21324a; width:28px; height:28px; border-radius:8px; cursor:pointer; font-size:1.15rem; line-height:1; display:none
-  }
+  #searchInput{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2321324a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>"); background-repeat:no-repeat; background-position:.6rem center; padding-left:2.2rem; padding-right:2.2rem }
+  #clearSearch{ position:absolute; top:50%; right:.35rem; transform:translateY(-50%); border:none; background:transparent; color:#21324a; width:28px; height:28px; border-radius:8px; cursor:pointer; font-size:1.15rem; line-height:1; display:none }
   #clearSearch:hover{ color:#0f172a }
   ::placeholder{ color:#7b8699 }
 
   /* ======= Контент ======= */
   .container{ max-width:1200px; margin:1.1rem auto; padding:0 1.25rem }
 
-  .section-card{
-    background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:.85rem;
-    box-shadow:var(--shadow-sm); transition: box-shadow .2s ease, border-color .2s ease, background .2s ease, transform .06s ease
-  }
-  /* Розовая подсветка всего блока при hover */
-  .section-card:hover{
-    background:linear-gradient(180deg, var(--pink-50), #fff);
-    border-color:var(--pink-200);
-    box-shadow:0 12px 34px rgba(236,72,153,.14);
-    transform:translateY(-1px);
-  }
+  .section-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:.85rem; box-shadow:var(--shadow-sm); transition: box-shadow .2s ease, border-color .2s ease, background .2s ease, transform .06s ease }
+  .section-card:hover{ background:linear-gradient(180deg, var(--card-hover), #fff); border-color:#e6dff0; box-shadow:0 12px 34px rgba(83,28,141,.14); transform:translateY(-1px) }
 
-  /* Узкие заголовки + цветная полоска сверху (градиент) */
-  .section-header{
-    position:relative; padding:.56rem .85rem;
-    background:linear-gradient(180deg, var(--light-blue-2), var(--surface));
-    cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem;
-    border-bottom:1px solid var(--border); border-top-left-radius:14px; border-top-right-radius:14px;
-    box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(15,31,61,.03)
-  }
-  .section-header::before{
-    content:""; position:absolute; left:0; right:0; top:0; height:3px;
-    background:linear-gradient(90deg, var(--accent), var(--accent-2)); /* менять цвета тут */
-    border-top-left-radius:inherit; border-top-right-radius:inherit
-  }
+  .section-header{ position:relative; padding:.56rem .85rem; background:linear-gradient(180deg, var(--light-blue-2), var(--surface)); cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; border-bottom:1px solid var(--border); border-top-left-radius:14px; border-top-right-radius:14px; box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(15,31,61,.03) }
+  .section-header::before{ content:""; position:absolute; left:0; right:0; top:0; height:var(--strip-height); background:var(--divider); border-top-left-radius:inherit; border-top-right-radius:inherit }
 
   .section-title{ display:flex; align-items:center; gap:.6rem; font-size:1rem; font-weight:800; letter-spacing:.25px; color:var(--brand-700) }
-  .section-title::before{ content:""; width:12px; height:12px; aspect-ratio:1/1; display:inline-block; border-radius:50%; background:var(--brand-700); box-shadow:0 1px 0 rgba(0,0,0,.08) }
-
+  .section-title::before{ content:""; width:12px; height:12px; border-radius:50%; background:var(--brand-700); box-shadow:0 1px 0 rgba(0,0,0,.08) }
   .section-arrow{ font-size:.95rem; color:#6b7280; transition: transform .2s ease, color .15s ease }
-  .section-header:hover .section-arrow{ color:var(--pink) }
+  .section-header:hover .section-arrow{ color:var(--brand) }
   .section-arrow.expanded{ transform:rotate(180deg) }
 
-  /* Плавное раскрытие */
   .section-content{ padding:0 .85rem .85rem; max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease, opacity .25s ease, padding-top .2s ease }
   .section-content.expanded{ padding:.85rem; max-height:1500px; opacity:1 }
 
   .algorithm-block{ margin-bottom:.9rem }
   .algorithm-block:last-child{ margin-bottom:0 }
-
   .algorithm-block h4{ color:#233154; font-size:.95rem; font-weight:500; margin-bottom:.48rem; letter-spacing:.2px; display:flex; align-items:center; gap:.5rem }
-  .algorithm-block h4::before{ content:""; width:10px; height:10px; aspect-ratio:1/1; display:inline-block; border-radius:50%; background:var(--brand-700); }
+  .algorithm-block h4::before{ content:""; width:10px; height:10px; border-radius:50%; background:var(--brand-700) }
   .algorithm-block p{ font-size:.94rem; color:#3c465a; margin:.28rem 0 }
   .algorithm-block ul, .algorithm-block ol{ margin-left:1.15rem; margin-top:.3rem }
   .algorithm-block ul{ list-style:none; padding-left:1rem }
   .algorithm-block ul li{ position:relative }
-  .algorithm-block ul li::before{ content:""; position:absolute; left:-1rem; top:0.72em; width:8px; height:8px; aspect-ratio:1/1; border-radius:50%; background:var(--brand-700); }
+  .algorithm-block ul li::before{ content:""; position:absolute; left:-1rem; top:0.72em; width:8px; height:8px; border-radius:50%; background:var(--brand-700) }
   .algorithm-block ol li::marker{ color:var(--brand-700) }
   .algorithm-block li{ margin:.28rem 0; color:#475569; font-size:.94rem }
 
@@ -206,24 +147,20 @@
   .action-buttons{ display:flex; gap:.5rem; margin-top:.75rem; padding-top:.75rem; border-top:1px solid var(--border); flex-wrap:wrap }
   .action-btn{ padding:.42rem .68rem; border:1px solid #e5eaf1; border-radius:10px; cursor:pointer; font-size:.86rem; font-weight:500; letter-spacing:.2px; display:inline-flex; align-items:center; gap:.4rem; transition: background-color .15s ease, color .15s ease, border-color .15s ease }
   .action-btn:hover{ border-color:#d7deeb }
-  .btn-primary{ background:#eef2ff; color:#0f1f3d }
-  .btn-primary:hover{ background:#dbe7ff; color:#0b1730 }
-  .btn-success{ background:#e8f7ec; color:#0f5132 }
-  .btn-success:hover{ background:#d3f0db; color:#063b23 }
+  .btn-primary{ background:#fff2e9; color:#4a2a0f; border-color:#f1d1b7 }
+  .btn-primary:hover{ background:#ffe6d2 }
+  .btn-success{ background:#f2f7ff; color:#1f2b69 }
+  .btn-success:hover{ background:#e6efff }
   .btn-secondary{ background:#f5f7fb; color:#374151 }
   .btn-secondary:hover{ background:#e9eef8; color:#111827 }
 
-  /* Плавающие кнопки: «Наверх» + «Свернуть всё» рядом */
+  /* Floating buttons */
   .floating-buttons{ position:fixed; bottom:1.1rem; right:1.1rem; display:flex; flex-direction:row; gap:.55rem; z-index:1000 }
-  .floating-btn{
-    background:linear-gradient(135deg, var(--brand), #5b6d91);
-    color:#fff; border:none; padding:.8rem; border-radius:14px; width:50px; height:50px; cursor:pointer;
-    box-shadow:var(--shadow-lg); transition: transform .08s ease, box-shadow .2s ease, filter .2s ease; font-size:.95rem; display:flex; align-items:center; justify-content:center
-  }
+  .floating-btn{ background:linear-gradient(135deg, var(--brand), var(--accent-2)); color:#fff; border:none; padding:.8rem; border-radius:14px; width:50px; height:50px; cursor:pointer; box-shadow:var(--shadow-lg); transition: transform .08s ease, box-shadow .2s ease, filter .2s ease; font-size:.95rem; display:flex; align-items:center; justify-content:center }
   .floating-btn:hover{ transform:translateY(-2px); box-shadow:0 16px 40px rgba(15,31,61,.22); filter:saturate(1.05) }
-  .floating-btn.pink{ background:linear-gradient(135deg, var(--pink), #f59ac4) }
+  .floating-btn.pink{ background:linear-gradient(135deg, var(--accent-2), var(--accent)) }
 
-  .highlight{ background:linear-gradient(180deg, rgba(122,162,255,.25), rgba(141,227,239,.14)); padding:1px 4px; border-radius:6px; box-decoration-break:clone }
+  .highlight{ background:linear-gradient(180deg, rgba(211,119,55,.20), rgba(83,28,141,.10)); padding:1px 4px; border-radius:6px; box-decoration-break:clone }
 
   .no-results{ text-align:center; padding:2.2rem; color:#6b7280; font-size:1rem; position:relative }
   .no-results::before{ content:"🔎"; display:block; font-size:1.6rem; margin-bottom:.4rem; opacity:.85 }
@@ -236,31 +173,15 @@
   .close-modal:hover{ color:#1f2937; background:#f2f5f9 }
 
   /* Адаптив */
-  @media (max-width: 900px){
-    .header{ grid-template-columns: 1fr; row-gap:.75rem; align-items:stretch }
-    .controls{ order:2 }
-    .brand-title{ font-size:1.3rem }
-    .badge-digital{ font-size:.95rem }
-    .title-right{ font-size:1.3rem }
-  }
-  @media (max-width: 768px){
-    .section-header{ padding:.5rem .8rem }
-    .section-title{ font-size:.95rem }
-    .action-btn{ padding:.36rem .52rem; font-size:.82rem }
-    .floating-btn{ width:46px; height:46px; font-size:.9rem; border-radius:12px }
-  }
+  @media (max-width: 900px){ .header{ grid-template-columns:1fr; row-gap:.75rem } .controls{ order:2 } .brand-title,.title-right{ font-size:1.2rem } }
+  @media (max-width: 768px){ .section-header{ padding:.5rem .8rem } .section-title{ font-size:.95rem } .action-btn{ padding:.36rem .52rem; font-size:.82rem } .floating-btn{ width:46px; height:46px; font-size:.9rem; border-radius:12px } }
 
-  /* Тёмная тема (авто) */
+  /* Дарк-тема авто */
   @media (prefers-color-scheme: dark){
-    :root{
-      --bg:#0b1220; --text:#e5e7eb; --muted:#9aa3b2; --surface:#0e1424; --surface-2:#0b1220; --border:#16223a;
-      --light-blue:#0f1f3d; --light-blue-2:#0e1424
-    }
+    :root{ --bg:#0b1220; --text:#e5e7eb; --muted:#9aa3b2; --surface:#0e1424; --surface-2:#0b1220; --border:#16223a; --light-blue-2:#0e1424; --divider:#24304a }
     .section-card{ border-color:#16223a }
-    .section-card:hover{ background:linear-gradient(180deg, rgba(236,72,153,.12), rgba(14,20,36,1)); border-color:#3b1c2c; box-shadow:0 12px 34px rgba(236,72,153,.22) }
+    .section-card:hover{ box-shadow:0 12px 34px rgba(83,28,141,.28) }
     .section-header{ background:linear-gradient(180deg,var(--light-blue-2),#0e1424); border-bottom-color:#16223a }
-    .section-header::before{ background:linear-gradient(90deg, #6b8cff, #47d6e3) }
-    .algorithm-block p, .algorithm-block li{ color:#cfd6df }
     code{ background:#0b1220; border-color:#16223a }
     .btn-secondary{ background:#131a2c; color:#cfd6df; border-color:#16223a }
     .modal-content{ border-color:#16223a }
@@ -270,19 +191,19 @@
 <body>
   <div class="header">
     <div class="header-bar">
-      <span class="title-left">
-        <span class="brand-title">Методика организации работы блока реализации и развития услуг</span>
-      </span>
+      <span class="brand-title">Методика организации работы блока реализации и развития услуг</span>
       <span class="title-right">РОССЕТИ КУБАНЬ</span>
     </div>
     <div class="controls">
+      <div class="theme-switch" role="group" aria-label="Переключение темы">
+        <button class="theme-btn active" data-theme="violet">Фиолет + Оранж</button>
+        <button class="theme-btn" data-theme="bordeaux">Бордо + Оранж</button>
+      </div>
       <div class="select-wrap">
         <select id="reglamentSelect">
-          <option value="r057-2022">Р 057-2022 - РЕГЛАМЕНТ ПО ВЫЯВЛЕНИЮ, СОКРАЩЕНИЮ И ИСКЛЮЧЕНИЮ БЕЗДОГОВОРНОГО И
-БЕЗУЧЕТНОГО ПОТРЕБЛЕНИЯ ЭЛЕКТРОЭНЕРГИИ</option>
+          <option value="r057-2022">Р 057-2022 - РЕГЛАМЕНТ ПО ВЫЯВЛЕНИЮ, СОКРАЩЕНИЮ И ИСКЛЮЧЕНИЮ БЕЗДОГОВОРНОГО И БЕЗУЧЕТНОГО ПОТРЕБЛЕНИЯ ЭЛЕКТРОЭНЕРГИИ</option>
           <option value="other" disabled>Другие регламенты (будут добавлены)</option>
         </select>
-        <!-- бегущая строка-оверлей (включается когда текст не помещается) -->
         <div id="selectMarquee" class="select-marquee" aria-hidden="true" style="display:none;"></div>
       </div>
       <div class="search-wrap">
@@ -295,8 +216,8 @@
   <div class="container" id="contentContainer"></div>
 
   <div class="floating-buttons">
-    <button class="floating-btn" id="scrollTopBtn" title="Наверх" style="display: none;">▲</button>
-    <button class="floating-btn pink" id="collapseAllBtn" title="Свернуть все" style="display: none;">▾</button>
+    <button class="floating-btn" id="scrollTopBtn" title="Наверх" style="display:none;">▲</button>
+    <button class="floating-btn pink" id="collapseAllBtn" title="Свернуть все" style="display:none;">▾</button>
   </div>
 
   <div id="sourceModal" class="source-modal">
@@ -308,7 +229,7 @@
   </div>
 
   <script>
-    // ======= Данные алгоритмов (из твоего сообщения, без изменений) =======
+    /* ======= Алгоритмы (как в твоём исходнике, без правок) ======= */
     const algorithms = {
       'r057-2022': [
         { id: 'normative', title: 'НОРМАТИВНЫЕ ПОЛОЖЕНИЯ', content: { actions: [ { text: 'Настоящий Регламент работы ПАО «Россети Кубань» по выявлению, сокращению и исключению бездоговорного, безучетного потребления электроэнергии, на основе Стандарта утвержденного распоряжением ПАО «Россети» от 20.11.2017 №631р.' } ], keyPoints: [ 'Регламентом указан порядок работ на основании ПП РФ №442 (розничные рынки), ПП РФ №354 (коммунальные услуги), ПП РФ №861 (технологическое присоеденение)', 'Единые требования к фото/видео фиксации нарушений связанных с учетом ЭЭ, расчет актов БУ/БД, протоколам комиссий и хранению материалов', 'Разграничение порядка введения ограничений: юрлица — по ПП РФ №442; граждане — по ПП РФ №354' ], responsible: 'Все подразделения ФЭС/РЭС, СРУ, УРРУ, СУЭ', deadline: 'Постоянно' } },
@@ -331,291 +252,128 @@
         { id: 'law-enforcement', title: 'ЗАЯВЛЕНИЯ В ПРАВООХРАНИТЕЛЬНЫЕ ОРГАНЫ', content: { timing: [ 'В течение 7 р.д. с даты акта — обязательное направление материалов (принцип неотвратимости)', 'В 4 р.д. руководитель подразделения направляет копию акта в безопасность', 'Безопасность направляет заявления в 3 р.д. с момента получения акта' ], forms: [ 'Физлица — Прил. 13', 'Юрлица/ИП — Прил. 14', 'Сумма >250 тыс. руб. — Прил. 14.1', 'После введения ограничения — Прил. 14.2', 'Суммарная мощность >150 кВт, U>1000 В — Прил. 14.3' ], special: 'При сумме ≥250 тыс. руб. по бездоговорному — копии актов в департамент безопасности ИА для подготовки заявлений (Прил. 15)', responsible: 'Подразделение безопасности', deadline: 'См. сроки выше' } },
         { id: 'operational-control', title: 'ОПЕРАТИВНЫЙ КОНТРОЛЬ', content: { steps: [ 'Все акты заносятся в ПК «1С:Энергетика» (контроль полноты/сроков — руководитель РЭС/СРУ ФЭС)', 'Ежемесячно — формы (Прил. 9–12) в Excel + скан свода по филиалу → УРУ департамента РУиУЭ ИА до 18 числа', 'Сверка отчётов с реестрами ЭСК (включения в полезный отпуск) и оплаченных актов по бездоговорному' ], reporting: [ 'Корректировки — в следующем периоде с пояснительной запиской', 'Стоимость безучётного — по единым (котловым) тарифам ДГРТ КК, действующим в периоде составления актов', 'П.5 отчёта по бездоговорному — заполняет СПСДФ (объём/стоимость без учёта поступившей оплаты)' ], storage: [ 'Журналы — пронумерованы, прошнурованы, скреплены печатью; хранение 5 лет', 'Скан‑копии актов — 5 лет (или до полной оплаты)' ], responsible: 'СРУ, руководители РЭС/ФЭС', deadline: 'До 18 числа месяца, следующего за отчётным' } },
         { id: 'acts-lifecycle', title: 'ПОЛУЧЕНИЕ / УЧЁТ / ХРАНЕНИЕ / СПИСАНИЕ АКТОВ', content: { steps: [ 'Назначить распоряжением ответственных за учёт/движение/хранение актов в СУЭ, СРУ, УРРУ', 'Вести журналы учёта бланков/актов (Прил. 16; Прил. 5–6): нумерация, прошивка, печать', 'Регистрация полученных комплектов бланков по филиалу и на участках; выдача линейному персоналу под подпись', 'Ежесменно сдавать оформленные акты с фото/видео материалами ответственному лицу', 'Проверка комплектности, организация хранения медиа, передача на расчёт объёма', 'Доработка при недостатках; списание испорченных/утраченных бланков по объяснительной и результатам разбирательства' ], timing: [ 'Заявки УРРУ на отключение бездоговорных объектов → начальнику РЭС — в 1 р.д.; введение полного ограничения — в 1 р.д.; возврат исполненных заявок — в 1 р.д.' ], storage: [ 'Акты и заявки хранятся совместно; сканы и журналы — 5 лет' ], responsible: 'Ответственные СУЭ/СРУ/УРРУ/РЭС', deadline: 'Оперативные сроки см. в шагах' } },
-        { id: 'acts-flow', title: 'ОБОРОТ АКТОВ / КОМИССИИ / РЕЕСТРЫ', content: { steps: [ 'Назначить ответственных за предварительные расчёты по актам в ФЭС/УРРУ', 'Определить места и сроки хранения актов (сканы + материалы пломб/ЗВК, фото/видео)', 'Создать Комиссии (УРРУ/ФЭС), вести протоколы', 'Скан‑копии актов: по неучётному — хранение в УРРУ (или ФЭС по своей зоне); по бездоговорному — в УРРУ/ФЭС и СПСДФ/бухгалтерии', 'Отдел экономики ФЭС — до 7 числа предоставляет реестр поступивших средств по бездоговорному (Прил. 4)' ], reporting: [ 'В сводную таблицу «\\\\File-srv-1\\неучтенное потребление электроэнергии» — внесение каждого события по акту в 1 р.д. ответственным исполнителем' ], responsible: 'СРУ, УРРУ, ФЭС, СПСДФ, безопасность', deadline: 'Согласно регламентным срокам' } },
+        { id: 'acts-flow', title: 'ОБОРОТ АКТОВ / КОМИССИИ / РЕЕСТРЫ', content: { steps: [ 'Назначить ответственных за предварительные расчёты по актам в ФЭС/УРРУ', 'Определить места и сроки хранения актов (сканы + материалы пломб/ЗВК, фото/видео)', 'Создать Комиссии (УРРУ/ФЭС), вести протоколы', 'Скан‑копии актов: по неучётному — хранение в УРРУ (или ФЭС по своей зоне); по бездоговорному — в УРРУ/ФЭС и СПСДФ/бухгалтерии', 'Отдел экономики ФЭС — до 7 числа предоставляет реестр поступивших средств по бездоговорному (Прил. 4)' ], reporting: [ 'В сводную таблицу "\\\\File-srv-1\\неучтенное потребление электроэнергии" — внесение каждого события по акту в 1 р.д. ответственным исполнителем' ], responsible: 'СРУ, УРРУ, ФЭС, СПСДФ, безопасность', deadline: 'Согласно регламентным срокам' } },
         { id: 'common-schemes', title: 'ТИПОВЫЕ СПОСОБЫ НЕУЧЁТНОГО ПОТРЕБЛЕНИЯ', content: { actions: [ { text: 'Чек‑лист квалификации нарушений', list: [ 'Самовольные подключения к объектам электросетевого хозяйства', 'Повторные подключения после ограничения', 'Потребление без договора', 'Индикатор/магнит (АМ‑пломба), фальсификация пломб', 'Скрытая проводка в обход счётчика, «перемычки»', 'Механическое воздействие на ПУ, повреждения корпуса/стекла', 'Отсутствие ранее допущенного ПУ', 'Нарушение целостности/отсутствие пломб (вводной аппарат, ТТ/ТН и т.п.)', 'Отсутствие пломбы поверителя/клейма', 'Встроенные элементы, не предусмотренные изготовителем' ] } ], responsible: 'Персонал РЭС/УРРУ/СУЭ', deadline: 'При каждом выявлении' } }
       ]
     };
 
     let expandedSections = new Set();
 
-    // ======= Нормализация строк для поиска =======
-    function normalizeStr(s){
-      return String(s)
-        .toLowerCase()
-        .replace(/ё/g,'е')
-        .replace(/[\s._(),\-–—\[\]{}:;!?"'`~+/\\]+/g,' ')
-        .replace(/\s+/g,' ')
-        .trim();
-    }
-
-    // ======= Поиск по объекту =======
-    function searchInObject(obj, termNorm){
-      for (let key in obj){
-        if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
-        const value = obj[key];
-        if (typeof value === 'string'){
-          if (normalizeStr(value).includes(termNorm)) return true;
-        } else if (Array.isArray(value)){
-          for (let item of value){
-            if (typeof item === 'string') { if (normalizeStr(item).includes(termNorm)) return true; }
-            else if (item && typeof item === 'object' && searchInObject(item, termNorm)) return true;
-          }
-        } else if (value && typeof value === 'object'){
-          if (searchInObject(value, termNorm)) return true;
-        }
-      }
-      return false;
-    }
-
-    // ======= Экранирование и подсветка =======
+    /* ======= Поиск и подсветка ======= */
+    function normalizeStr(s){ return String(s).toLowerCase().replace(/ё/g,'е').replace(/[\s._(),\-–—\[\]{}:;!?"'`~+/\\]+/g,' ').replace(/\s+/g,' ').trim(); }
+    function searchInObject(obj, termNorm){ for (let k in obj){ if(!Object.prototype.hasOwnProperty.call(obj,k)) continue; const v=obj[k]; if(typeof v==='string'){ if(normalizeStr(v).includes(termNorm)) return true; } else if(Array.isArray(v)){ for(const it of v){ if(typeof it==='string'){ if(normalizeStr(it).includes(termNorm)) return true; } else if(it && typeof it==='object' && searchInObject(it,termNorm)) return true; } } else if(v && typeof v==='object'){ if(searchInObject(v,termNorm)) return true; } } return false; }
     function escapeRegExp(str){ return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') }
-    function highlightText(text, searchTerm){
-      if (!searchTerm || text == null || typeof text !== 'string') return text;
-      const pattern = escapeRegExp(searchTerm);
-      if (!pattern) return text;
-      const regex = new RegExp(`(${pattern})`, 'giu');
-      return text.replace(regex, '<span class="highlight">$1<\/span>');
-    }
+    function highlightText(text, searchTerm){ if(!searchTerm||text==null||typeof text!=='string') return text; const pattern=escapeRegExp(searchTerm); if(!pattern) return text; const regex=new RegExp(`(${pattern})`,'giu'); return text.replace(regex,'<span class="highlight">$1<\/span>'); }
 
+    /* ======= Рендер ======= */
     function renderContent(){
-      const container = document.getElementById('contentContainer');
-      const selectedReglament = document.getElementById('reglamentSelect').value;
-      const rawInput = document.getElementById('searchInput').value || '';
-      const normTerm = normalizeStr(rawInput);
-      const rawTerm = rawInput.trim();
-
-      const clearBtn = document.getElementById('clearSearch');
-      clearBtn.style.display = rawTerm ? 'block' : 'none';
-
-      container.innerHTML = '';
-      if (!algorithms[selectedReglament]){ container.innerHTML = '<div class="no-results">Регламент не найден<\/div>'; updateCollapseBtnVisibility(); return; }
-
-      let list = algorithms[selectedReglament];
-      if (normTerm){ list = list.filter(algo => searchInObject(algo, normTerm)); }
-      if (list.length === 0){ container.innerHTML = '<div class="no-results">По вашему запросу ничего не найдено<\/div>'; updateCollapseBtnVisibility(); return; }
-
-      list.forEach(algo => container.appendChild(createSection(algo, rawTerm)));
+      const container=document.getElementById('contentContainer');
+      const selected=document.getElementById('reglamentSelect').value;
+      const rawInput=document.getElementById('searchInput').value||'';
+      const normTerm=normalizeStr(rawInput);
+      const rawTerm=rawInput.trim();
+      document.getElementById('clearSearch').style.display=rawTerm?'block':'none';
+      container.innerHTML='';
+      if(!algorithms[selected]){ container.innerHTML='<div class="no-results">Регламент не найден<\/div>'; updateCollapseBtnVisibility(); return; }
+      let list=algorithms[selected];
+      if(normTerm){ list=list.filter(a=>searchInObject(a,normTerm)); }
+      if(list.length===0){ container.innerHTML='<div class="no-results">По вашему запросу ничего не найдено<\/div>'; updateCollapseBtnVisibility(); return; }
+      list.forEach(a=>container.appendChild(createSection(a,rawTerm)));
       updateCollapseBtnVisibility();
     }
 
     function createSection(algo, rawTerm){
-      const card = document.createElement('div'); card.className = 'section-card';
-
-      const header = document.createElement('div'); header.className = 'section-header'; header.onclick = () => toggleSection(algo.id);
-
-      const title = document.createElement('div'); title.className = 'section-title'; title.innerHTML = highlightText(algo.title, rawTerm);
-      const arrow = document.createElement('div'); arrow.className = 'section-arrow'; arrow.innerHTML = '▼'; if (expandedSections.has(algo.id)) arrow.classList.add('expanded');
-
+      const card=document.createElement('div'); card.className='section-card';
+      const header=document.createElement('div'); header.className='section-header'; header.onclick=()=>toggleSection(algo.id);
+      const title=document.createElement('div'); title.className='section-title'; title.innerHTML=highlightText(algo.title,rawTerm);
+      const arrow=document.createElement('div'); arrow.className='section-arrow'; arrow.innerHTML='▼'; if(expandedSections.has(algo.id)) arrow.classList.add('expanded');
       header.appendChild(title); header.appendChild(arrow);
+      const content=document.createElement('div'); content.className='section-content'; content.id=`content-${algo.id}`; if(expandedSections.has(algo.id)) content.classList.add('expanded');
 
-      const content = document.createElement('div'); content.className = 'section-content'; content.id = `content-${algo.id}`; if (expandedSections.has(algo.id)) content.classList.add('expanded');
+      if(algo.content.steps) content.appendChild(createBlock('Порядок действий:', algo.content.steps, rawTerm, true));
+      if(algo.content.actions){ algo.content.actions.forEach(action=>{ const d=document.createElement('div'); d.className='algorithm-block'; d.innerHTML=`<h4>${highlightText(action.text,rawTerm)}<\/h4>`; if(action.list){ const ul=document.createElement('ul'); action.list.forEach(it=>{ const li=document.createElement('li'); li.innerHTML=highlightText(it,rawTerm); ul.appendChild(li); }); d.appendChild(ul);} content.appendChild(d); }); }
+      if(algo.content.keyPoints) content.appendChild(createBlock('Ключевые моменты:', algo.content.keyPoints, rawTerm));
+      if(algo.content.riskCriteria) content.appendChild(createBlock('Критерии группы риска:', algo.content.riskCriteria, rawTerm));
+      if(algo.content.raids){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Рейды:<\/h4><p>${highlightText(algo.content.raids, rawTerm)}<\/p>`; content.appendChild(b);} 
+      if(algo.content.period){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Период расчёта:<\/h4><p>${highlightText(algo.content.period, rawTerm)}<\/p>`; content.appendChild(b);} 
+      if(algo.content.periodDetails){ const b=document.createElement('div'); b.className='algorithm-block'; const ul=document.createElement('ul'); algo.content.periodDetails.forEach(det=>{ const li=document.createElement('li'); li.innerHTML=`<strong>${highlightText(det.title,rawTerm)}<\/strong> ${highlightText(det.text,rawTerm)}`; ul.appendChild(li); }); b.appendChild(ul); content.appendChild(b);} 
+      if(algo.content.formulas){ algo.content.formulas.forEach(f=>{ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>${f.title}<\/h4>`; if(f.formula) b.innerHTML+=`<p><code>${f.formula}<\/code><\/p>`; if(f.list){ const ul=document.createElement('ul'); f.list.forEach(it=>{ const li=document.createElement('li'); li.innerHTML=`<code>${it}<\/code>`; ul.appendChild(li); }); b.appendChild(ul);} content.appendChild(b); }); }
+      if(algo.content.parameters) content.appendChild(createBlock('Параметры:', algo.content.parameters, rawTerm));
+      if(algo.content.sources) content.appendChild(createBlock('Источники информации:', algo.content.sources, rawTerm));
+      if(algo.content.unauthorizedConnection) content.appendChild(createBlock('При несанкционированном подключении (п.62 ПП РФ №354):', algo.content.unauthorizedConnection, rawTerm));
+      if(algo.content.meterIntervention) content.appendChild(createBlock('При вмешательстве в ПУ (п.81(11) ПП РФ №354):', algo.content.meterIntervention, rawTerm));
+      if(algo.content.nonAdmission) content.appendChild(createBlock('При недопуске:', algo.content.nonAdmission, rawTerm));
+      if(algo.content.pricing) content.appendChild(createBlock('Стоимость:', algo.content.pricing, rawTerm));
+      if(algo.content.important){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4 style=\"color:#b91c1c;\">Важно:<\/h4><p><strong>${highlightText(algo.content.important, rawTerm)}<\/strong><\/p>`; content.appendChild(b);} 
+      if(algo.content.recalculation) content.appendChild(createBlock('Перерасчёт:', algo.content.recalculation, rawTerm));
+      if(algo.content.composition) content.appendChild(createBlock('Состав:', algo.content.composition, rawTerm));
+      if(algo.content.tasks) content.appendChild(createBlock('Задачи комиссии:', algo.content.tasks, rawTerm));
+      if(algo.content.timing) content.appendChild(createBlock('Сроки:', algo.content.timing, rawTerm));
+      if(algo.content.structure) content.appendChild(createBlock('Структура комиссий:', algo.content.structure, rawTerm));
+      if(algo.content.consultations){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Консультации:<\/h4><p>${highlightText(algo.content.consultations, rawTerm)}<\/p>`; content.appendChild(b);} 
+      if(algo.content.documents && typeof algo.content.documents==='string'){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Документы:<\/h4><p>${highlightText(algo.content.documents, rawTerm)}<\/p>`; content.appendChild(b);} 
+      if(algo.content.deadlines) content.appendChild(createBlock('Сроки:', algo.content.deadlines, rawTerm));
+      if(algo.content.nonPayment) content.appendChild(createBlock('При неоплате:', algo.content.nonPayment, rawTerm));
+      if(algo.content.documents && Array.isArray(algo.content.documents)) content.appendChild(createBlock('Документы для СПСДФ:', algo.content.documents, rawTerm));
+      if(algo.content.forms) content.appendChild(createBlock('Формы заявлений:', algo.content.forms, rawTerm));
+      if(algo.content.reporting) content.appendChild(createBlock('Отчётность:', algo.content.reporting, rawTerm));
+      if(algo.content.storage) content.appendChild(createBlock('Хранение:', algo.content.storage, rawTerm));
+      if(algo.content.special){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Особый порядок:<\/h4><p>${highlightText(algo.content.special, rawTerm)}<\/p>`; content.appendChild(b);} 
+      if(algo.content.correction){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Корректировка:<\/h4><p>${highlightText(algo.content.correction, rawTerm)}<\/p>`; content.appendChild(b);} 
+      if(algo.content.control){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Контроль:<\/h4><p>${highlightText(algo.content.control, rawTerm)}<\/p>`; content.appendChild(b);} 
 
-      if (algo.content.steps) content.appendChild(createBlock('Порядок действий:', algo.content.steps, rawTerm, true));
+      const footer=document.createElement('div'); footer.className='algorithm-block';
+      if(algo.content.responsible) footer.innerHTML+=`<p><strong>Ответственный:<\/strong> ${highlightText(algo.content.responsible, rawTerm)}<\/p>`;
+      if(algo.content.deadline) footer.innerHTML+=`<p><strong>Срок:<\/strong> ${highlightText(algo.content.deadline, rawTerm)}<\/p>`;
+      if(footer.innerHTML) content.appendChild(footer);
 
-      if (algo.content.actions){
-        algo.content.actions.forEach(action => {
-          const actionDiv = document.createElement('div'); actionDiv.className = 'algorithm-block';
-          actionDiv.innerHTML = `<h4>${highlightText(action.text, rawTerm)}<\/h4>`;
-          if (action.list){ const ul = document.createElement('ul'); action.list.forEach(item => { const li = document.createElement('li'); li.innerHTML = highlightText(item, rawTerm); ul.appendChild(li); }); actionDiv.appendChild(ul); }
-          content.appendChild(actionDiv);
-        });
-      }
-
-      if (algo.content.keyPoints) content.appendChild(createBlock('Ключевые моменты:', algo.content.keyPoints, rawTerm));
-      if (algo.content.riskCriteria) content.appendChild(createBlock('Критерии группы риска:', algo.content.riskCriteria, rawTerm));
-      if (algo.content.raids){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Рейды:<\/h4><p>${highlightText(algo.content.raids, rawTerm)}<\/p>`; content.appendChild(b); }
-      if (algo.content.period){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Период расчёта:<\/h4><p>${highlightText(algo.content.period, rawTerm)}<\/p>`; content.appendChild(b); }
-
-      if (algo.content.periodDetails) {
-        const b = document.createElement('div');
-        b.className = 'algorithm-block';
-        const ul = document.createElement('ul');
-        algo.content.periodDetails.forEach(detail => {
-          const li = document.createElement('li');
-          li.innerHTML = `<strong>${highlightText(detail.title, rawTerm)}<\/strong> ${highlightText(detail.text, rawTerm)}`;
-          ul.appendChild(li);
-        });
-        b.appendChild(ul);
-        content.appendChild(b);
-      }
-
-      if (algo.content.formulas){
-        algo.content.formulas.forEach(f => {
-          const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>${f.title}<\/h4>`;
-          if (f.formula) b.innerHTML += `<p><code>${f.formula}<\/code><\/p>`;
-          if (f.list){ const ul = document.createElement('ul'); f.list.forEach(item => { const li = document.createElement('li'); li.innerHTML = `<code>${item}<\/code>`; ul.appendChild(li); }); b.appendChild(ul); }
-          content.appendChild(b);
-        });
-      }
-
-      if (algo.content.parameters) content.appendChild(createBlock('Параметры:', algo.content.parameters, rawTerm));
-      if (algo.content.sources) content.appendChild(createBlock('Источники информации:', algo.content.sources, rawTerm));
-      if (algo.content.unauthorizedConnection) content.appendChild(createBlock('При несанкционированном подключении (п.62 ПП РФ №354):', algo.content.unauthorizedConnection, rawTerm));
-      if (algo.content.meterIntervention) content.appendChild(createBlock('При вмешательстве в ПУ (п.81(11) ПП РФ №354):', algo.content.meterIntervention, rawTerm));
-      if (algo.content.nonAdmission) content.appendChild(createBlock('При недопуске:', algo.content.nonAdmission, rawTerm));
-      if (algo.content.pricing) content.appendChild(createBlock('Стоимость:', algo.content.pricing, rawTerm));
-      if (algo.content.important){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4 style=\"color:#b91c1c;\">Важно:<\/h4><p><strong>${highlightText(algo.content.important, rawTerm)}<\/strong><\/p>`; content.appendChild(b); }
-      if (algo.content.recalculation) content.appendChild(createBlock('Перерасчёт:', algo.content.recalculation, rawTerm));
-      if (algo.content.composition) content.appendChild(createBlock('Состав:', algo.content.composition, rawTerm));
-      if (algo.content.tasks) content.appendChild(createBlock('Задачи комиссии:', algo.content.tasks, rawTerm));
-      if (algo.content.timing) content.appendChild(createBlock('Сроки:', algo.content.timing, rawTerm));
-      if (algo.content.structure) content.appendChild(createBlock('Структура комиссий:', algo.content.structure, rawTerm));
-      if (algo.content.consultations){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Консультации:<\/h4><p>${highlightText(algo.content.consultations, rawTerm)}<\/p>`; content.appendChild(b); }
-      if (algo.content.documents && typeof algo.content.documents === 'string'){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Документы:<\/h4><p>${highlightText(algo.content.documents, rawTerm)}<\/p>`; content.appendChild(b); }
-      if (algo.content.deadlines) content.appendChild(createBlock('Сроки:', algo.content.deadlines, rawTerm));
-      if (algo.content.nonPayment) content.appendChild(createBlock('При неоплате:', algo.content.nonPayment, rawTerm));
-      if (algo.content.documents && Array.isArray(algo.content.documents)) content.appendChild(createBlock('Документы для СПСДФ:', algo.content.documents, rawTerm));
-      if (algo.content.forms) content.appendChild(createBlock('Формы заявлений:', algo.content.forms, rawTerm));
-      if (algo.content.reporting) content.appendChild(createBlock('Отчётность:', algo.content.reporting, rawTerm));
-      if (algo.content.storage) content.appendChild(createBlock('Хранение:', algo.content.storage, rawTerm));
-      if (algo.content.special){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Особый порядок:<\/h4><p>${highlightText(algo.content.special, rawTerm)}<\/p>`; content.appendChild(b); }
-      if (algo.content.correction){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Корректировка:<\/h4><p>${highlightText(algo.content.correction, rawTerm)}<\/p>`; content.appendChild(b); }
-      if (algo.content.control){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Контроль:<\/h4><p>${highlightText(algo.content.control, rawTerm)}<\/p>`; content.appendChild(b); }
-
-      const footer = document.createElement('div'); footer.className = 'algorithm-block';
-      if (algo.content.responsible) footer.innerHTML += `<p><strong>Ответственный:<\/strong> ${highlightText(algo.content.responsible, rawTerm)}<\/p>`;
-      if (algo.content.deadline) footer.innerHTML += `<p><strong>Срок:<\/strong> ${highlightText(algo.content.deadline, rawTerm)}<\/p>`;
-      if (footer.innerHTML) content.appendChild(footer);
-
-      const buttons = document.createElement('div'); buttons.className = 'action-buttons';
-      const attachBtn = document.createElement('button'); attachBtn.className = 'action-btn btn-success'; attachBtn.innerHTML = '📎 Загрузить'; attachBtn.onclick = () => alert('Функция загрузки приложений будет добавлена позже');
-      const openBtn = document.createElement('button'); openBtn.className = 'action-btn btn-primary'; openBtn.innerHTML = '📄 Документ';
-      openBtn.onclick = () => {
-        try {
-          const selectedReglament = document.getElementById('reglamentSelect').value;
-          if (!window.navigationMaps || !window.navigationMaps[selectedReglament]){
-            alert('Навигационная карта недоступна в предпросмотре');
-            return;
-          }
-          openSourceDocument(algo.id);
-        } catch(e){ alert('Навигационная карта недоступна в предпросмотре'); }
-      };
-      const collapseBtn = document.createElement('button'); collapseBtn.className = 'action-btn btn-secondary'; collapseBtn.innerHTML = '↥ Свернуть'; collapseBtn.onclick = () => toggleSection(algo.id);
-      buttons.appendChild(attachBtn); buttons.appendChild(openBtn); buttons.appendChild(collapseBtn);
-      content.appendChild(buttons);
+      const buttons=document.createElement('div'); buttons.className='action-buttons';
+      const attachBtn=document.createElement('button'); attachBtn.className='action-btn btn-success'; attachBtn.innerHTML='📎 Загрузить'; attachBtn.onclick=()=>alert('Функция загрузки приложений будет добавлена позже');
+      const openBtn=document.createElement('button'); openBtn.className='action-btn btn-primary'; openBtn.innerHTML='📄 Документ'; openBtn.onclick=()=>openSourceDocument(algo.id);
+      const collapseBtn=document.createElement('button'); collapseBtn.className='action-btn btn-secondary'; collapseBtn.innerHTML='↥ Свернуть'; collapseBtn.onclick=()=>toggleSection(algo.id);
+      buttons.appendChild(attachBtn); buttons.appendChild(openBtn); buttons.appendChild(collapseBtn); content.appendChild(buttons);
 
       card.appendChild(header); card.appendChild(content); return card;
     }
 
-    function createBlock(title, items, rawTerm, ordered=false){
-      const block = document.createElement('div'); block.className = 'algorithm-block'; block.innerHTML = `<h4>${title}<\/h4>`;
-      const list = ordered ? document.createElement('ol') : document.createElement('ul');
-      items.forEach(item=>{ const li = document.createElement('li'); li.innerHTML = highlightText(item, rawTerm); list.appendChild(li); });
-      block.appendChild(list); return block;
-    }
+    function createBlock(title, items, rawTerm, ordered=false){ const block=document.createElement('div'); block.className='algorithm-block'; block.innerHTML=`<h4>${title}<\/h4>`; const list=ordered?document.createElement('ol'):document.createElement('ul'); items.forEach(it=>{ const li=document.createElement('li'); li.innerHTML=highlightText(it,rawTerm); list.appendChild(li); }); block.appendChild(list); return block; }
 
-    function toggleSection(sectionId){
-      const content = document.getElementById(`content-${sectionId}`); const arrow = content.previousElementSibling.querySelector('.section-arrow');
-      if (expandedSections.has(sectionId)){ expandedSections.delete(sectionId); content.classList.remove('expanded'); arrow.classList.remove('expanded'); }
-      else { expandedSections.add(sectionId); content.classList.add('expanded'); arrow.classList.add('expanded'); }
-      updateCollapseBtnVisibility();
-    }
+    function toggleSection(id){ const content=document.getElementById(`content-${id}`); const arrow=content.previousElementSibling.querySelector('.section-arrow'); if(expandedSections.has(id)){ expandedSections.delete(id); content.classList.remove('expanded'); arrow.classList.remove('expanded'); } else { expandedSections.add(id); content.classList.add('expanded'); arrow.classList.add('expanded'); } updateCollapseBtnVisibility(); }
+    function collapseAllSections(){ document.querySelectorAll('.section-content.expanded').forEach(el=>{ el.classList.remove('expanded'); const arrow=el.previousElementSibling.querySelector('.section-arrow'); if(arrow) arrow.classList.remove('expanded'); }); expandedSections.clear(); updateCollapseBtnVisibility(); }
 
-    function collapseAllSections(){
-      document.querySelectorAll('.section-content.expanded').forEach(el => {
-        el.classList.remove('expanded');
-        const arrow = el.previousElementSibling.querySelector('.section-arrow');
-        if (arrow) arrow.classList.remove('expanded');
-      });
-      expandedSections.clear();
-      updateCollapseBtnVisibility();
-    }
+    /* ======= Фикс открытия PDF для GitHub Pages и превью ======= */
+    function buildDocUrl(docUrl){ if(/^https?:\/\//i.test(docUrl)) return docUrl; const {origin, pathname}=location; const basePath=pathname.replace(/\/[^\/]*$/,''); if(docUrl.startsWith('/')) return origin + basePath + docUrl; return origin + basePath + '/' + docUrl; }
+    function openSourceDocument(sectionId){ const selected=document.getElementById('reglamentSelect').value; const navMap=(window.navigationMaps||{})[selected]; if(!navMap||!navMap.sections||!navMap.sections[sectionId]){ alert('Раздел не найден в навигационной карте'); return; } const page=navMap.sections[sectionId].page; const pdfUrl=buildDocUrl(navMap.docUrl)+`#page=${page}`; const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent); if(isMobile){ const modal=document.getElementById('sourceModal'); const sourceText=document.getElementById('sourceText'); sourceText.innerHTML=`<div style="text-align:center;padding:20px;"><h3 style="color: var(--brand-700); margin-bottom:1rem;">Раздел ${navMap.sections[sectionId].section||page}</h3><p style="margin-bottom:1.5rem;">Откройте документ и перейдите на страницу <strong>${page}</strong></p><a href="${buildDocUrl(navMap.docUrl)}" class="action-btn btn-primary" style="display:inline-block;text-decoration:none;padding:.75rem 1.5rem;">Скачать PDF</a><button onclick="window.open('${buildDocUrl(navMap.docUrl)}','_blank')" class="action-btn btn-primary" style="margin-left:1rem;padding:.75rem 1.5rem;">Открыть PDF</button></div>`; modal.style.display='block'; } else { window.open(pdfUrl,'_blank'); } }
 
-    function openSourceDocument(sectionId) {
-      const selectedReglament = document.getElementById('reglamentSelect').value;
-      const navMap = (window.navigationMaps || {})[selectedReglament];
-      if (!navMap || !navMap.sections || !navMap.sections[sectionId]) { alert('Раздел не найден в навигационной карте'); return; }
-      const page = navMap.sections[sectionId].page;
-      const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-      const pdfUrl = `${baseUrl}${navMap.docUrl}#page=${page}`;
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        const modal = document.getElementById('sourceModal');
-        const sourceText = document.getElementById('sourceText');
-        sourceText.innerHTML = `
-            <div style="text-align: center; padding: 20px;">
-                <h3 style="color: #0f1f3d; margin-bottom: 1rem;">Раздел ${navMap.sections[sectionId].section || page}</h3>
-                <p style="margin-bottom: 1.5rem;">Откройте документ и перейдите на страницу <strong>${page}</strong></p>
-                <a href="${baseUrl}${navMap.docUrl}" class="action-btn btn-primary" style="display: inline-block; text-decoration: none; padding: 0.75rem 1.5rem;">Скачать PDF</a>
-                <button onclick="window.open('${baseUrl}${navMap.docUrl}', '_blank')" class="action-btn btn-primary" style="margin-left: 1rem; padding: 0.75rem 1.5rem;">Открыть PDF</button>
-            </div>
-        `;
-        modal.style.display = 'block';
-      } else {
-        window.open(pdfUrl, '_blank');
-      }
-    }
+    /* ======= Бегущая строка селекта ======= */
+    function updateSelectMarquee(){ const select=document.getElementById('reglamentSelect'); const marquee=document.getElementById('selectMarquee'); const text=select.options[select.selectedIndex]?.text||''; const measurer=document.createElement('span'); measurer.style.visibility='hidden'; measurer.style.position='absolute'; measurer.style.whiteSpace='nowrap'; measurer.style.font=getComputedStyle(select).font; measurer.textContent=text; document.body.appendChild(measurer); const visibleWidth=select.clientWidth-28; const overflow=measurer.getBoundingClientRect().width>visibleWidth; document.body.removeChild(measurer); if(overflow){ marquee.style.display='block'; select.classList.add('marquee-active'); marquee.innerHTML=`<span class="marquee-track">${text}&nbsp;&nbsp;•&nbsp;&nbsp;${text}</span>`; } else { marquee.style.display='none'; select.classList.remove('marquee-active'); marquee.innerHTML=''; } }
 
-    // ======= Бегущая строка для селекта =======
-    function updateSelectMarquee(){
-      const select = document.getElementById('reglamentSelect');
-      const marquee = document.getElementById('selectMarquee');
-      const text = select.options[select.selectedIndex]?.text || '';
+    /* ======= Плавающие кнопки ======= */
+    function updateFloatingByScroll(){ const show=window.pageYOffset>300; document.getElementById('scrollTopBtn').style.display=show?'flex':'none'; updateCollapseBtnVisibility(); }
+    function updateCollapseBtnVisibility(){ const btn=document.getElementById('collapseAllBtn'); const any=expandedSections.size>0; const scrolled=window.pageYOffset>300; btn.style.display=(any&&scrolled)?'flex':'none'; }
 
-      // измеряем, помещается ли текст
-      const measurer = document.createElement('span');
-      measurer.style.visibility = 'hidden';
-      measurer.style.position = 'absolute';
-      measurer.style.whiteSpace = 'nowrap';
-      measurer.style.font = getComputedStyle(select).font;
-      measurer.textContent = text;
-      document.body.appendChild(measurer);
-
-      // ширина видимой области минус иконка стрелки
-      const visibleWidth = select.clientWidth - 28;
-      const overflow = measurer.getBoundingClientRect().width > visibleWidth;
-      document.body.removeChild(measurer);
-
-      if (overflow){
-        marquee.style.display = 'block';
-        select.classList.add('marquee-active');
-        marquee.innerHTML = `<span class="marquee-track">${text}&nbsp;&nbsp;•&nbsp;&nbsp;${text}</span>`;
-      } else {
-        marquee.style.display = 'none';
-        select.classList.remove('marquee-active');
-        marquee.innerHTML = '';
-      }
-    }
-
-    // ======= Видимость плавающих кнопок =======
-    function updateFloatingByScroll(){
-      const show = window.pageYOffset > 300;
-      document.getElementById('scrollTopBtn').style.display = show ? 'flex' : 'none';
-      updateCollapseBtnVisibility();
-    }
-    function updateCollapseBtnVisibility(){
-      const collapseBtn = document.getElementById('collapseAllBtn');
-      const anyExpanded = expandedSections.size > 0;
-      const scrolled = window.pageYOffset > 300;
-      collapseBtn.style.display = (anyExpanded && scrolled) ? 'flex' : 'none';
-    }
+    /* ======= Переключение темы + сохранение ======= */
+    function setTheme(name){ document.documentElement.setAttribute('data-theme', name); localStorage.setItem('theme', name); document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active', b.dataset.theme===name)); }
 
     // Listeners
-    document.getElementById('reglamentSelect').addEventListener('change', () => { renderContent(); updateSelectMarquee(); });
+    document.querySelectorAll('.theme-btn').forEach(b=>b.addEventListener('click', ()=>setTheme(b.dataset.theme)));
+    document.getElementById('reglamentSelect').addEventListener('change', ()=>{ renderContent(); updateSelectMarquee(); });
     document.getElementById('searchInput').addEventListener('input', renderContent);
-    document.getElementById('clearSearch').addEventListener('click', () => { const i = document.getElementById('searchInput'); i.value = ''; i.focus(); renderContent(); });
-    document.getElementById('scrollTopBtn').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    document.getElementById('clearSearch').addEventListener('click', ()=>{ const i=document.getElementById('searchInput'); i.value=''; i.focus(); renderContent(); });
+    document.getElementById('scrollTopBtn').addEventListener('click', ()=>window.scrollTo({ top:0, behavior:'smooth' }));
     document.getElementById('collapseAllBtn').addEventListener('click', collapseAllSections);
-    document.querySelector('.close-modal').addEventListener('click', () => document.getElementById('sourceModal').style.display = 'none');
-    window.addEventListener('click', (e) => { const m = document.getElementById('sourceModal'); if (e.target === m) m.style.display = 'none'; });
-    window.addEventListener('scroll', () => { updateFloatingByScroll(); });
+    document.querySelector('.close-modal').addEventListener('click', ()=>document.getElementById('sourceModal').style.display='none');
+    window.addEventListener('click', e=>{ const m=document.getElementById('sourceModal'); if(e.target===m) m.style.display='none'; });
+    window.addEventListener('scroll', updateFloatingByScroll);
     window.addEventListener('resize', updateSelectMarquee);
 
     // Тесты
-    function runSearchTests(){
-      const t1 = algorithms['r057-2022'].some(a => searchInObject(a, normalizeStr('физ')));
-      console.assert(t1, 'Поиск по "физ" должен находить раздел(ы).');
-      const t2 = algorithms['r057-2022'].some(a => searchInObject(a, normalizeStr('рску')) || searchInObject(a, normalizeStr('рск')));
-      console.assert(t2, 'Поиск по "РСК" должен находить упоминания.');
-      const t3 = algorithms['r057-2022'].some(a => searchInObject(a, normalizeStr('ФИЗ')));
-      console.assert(t3, 'Поиск по "ФИЗ" (в верхнем регистре) должен находить раздел(ы).');
-    }
+    function runSearchTests(){ const t1=algorithms['r057-2022'].some(a=>searchInObject(a, normalizeStr('физ'))); console.assert(t1,'Поиск по "физ" должен находить раздел(ы).'); const t2=algorithms['r057-2022'].some(a=>searchInObject(a, normalizeStr('рску'))||searchInObject(a, normalizeStr('рск'))); console.assert(t2,'Поиск по "РСК" должен находить упоминания.'); const t3=algorithms['r057-2022'].some(a=>searchInObject(a, normalizeStr('ФИЗ'))); console.assert(t3,'Поиск по "ФИЗ" должен находить раздел(ы).'); }
 
     // init
-    renderContent();
-    runSearchTests();
-    updateSelectMarquee();
-    updateFloatingByScroll();
+    renderContent(); runSearchTests(); updateSelectMarquee(); updateFloatingByScroll();
+    // восстановить тему
+    const saved=localStorage.getItem('theme'); if(saved) setTheme(saved);
   </script>
 </body>
 </html>
