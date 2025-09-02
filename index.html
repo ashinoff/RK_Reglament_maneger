@@ -1044,8 +1044,42 @@
       localStorage.setItem('selectedTheme', theme);
     }
 
+    // Проверка необходимости бегущей строки
+    function checkMarqueeNeeded() {
+      const select = document.getElementById('reglamentSelect');
+      const wrapper = select.closest('.select-wrapper');
+      if (!select || !wrapper) return;
+      
+      const selectedText = select.options[select.selectedIndex].text;
+      
+      // Создаем временный элемент для измерения ширины текста
+      const temp = document.createElement('span');
+      temp.style.position = 'absolute';
+      temp.style.visibility = 'hidden';
+      temp.style.whiteSpace = 'nowrap';
+      temp.style.font = window.getComputedStyle(select).font;
+      temp.textContent = selectedText;
+      document.body.appendChild(temp);
+      
+      const textWidth = temp.offsetWidth;
+      const selectWidth = select.offsetWidth - 60; // учитываем паддинги и стрелку
+      
+      document.body.removeChild(temp);
+      
+      if (textWidth > selectWidth) {
+        wrapper.classList.add('marquee-active');
+        wrapper.setAttribute('data-text', selectedText + '     •     ' + selectedText + '     •     ');
+      } else {
+        wrapper.classList.remove('marquee-active');
+        wrapper.removeAttribute('data-text');
+      }
+    }
+
     // Listeners
-    document.getElementById('reglamentSelect').addEventListener('change', renderContent);
+    document.getElementById('reglamentSelect').addEventListener('change', () => {
+      renderContent();
+      checkMarqueeNeeded();
+    });
     document.getElementById('searchInput').addEventListener('input', renderContent);
     document.getElementById('clearSearch').addEventListener('click', () => { 
       const i = document.getElementById('searchInput'); 
@@ -1089,6 +1123,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       renderContent();
       updateCollapseButton();
+      checkMarqueeNeeded();
     });
 
     // Если DOM уже загружен
@@ -1096,11 +1131,18 @@
       document.addEventListener('DOMContentLoaded', () => {
         renderContent();
         updateCollapseButton();
+        checkMarqueeNeeded();
       });
     } else {
       renderContent();
       updateCollapseButton();
+      checkMarqueeNeeded();
     }
+
+    // Проверка при изменении размера окна
+    window.addEventListener('resize', () => {
+      checkMarqueeNeeded();
+    });
   </script>
 </body>
 </html>
