@@ -1,379 +1,1124 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="violet">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>РЕГЛАМЕНТ-digital — предпросмотр (две темы)</title>
-  <script>
-    // Фоллбек навигации для превью (если внешний js недоступен)
-    window.navigationMaps = window.navigationMaps || {
-      'r057-2022': { docUrl: '/regulations/r057-2022/source.pdf', sections: {} }
-    };
-  </script>
+  <title>РЕГЛАМЕНТ РОССЕТИ КУБАНЬ — интерактивная версия</title>
+  <script src="js/navigation-maps.js"></script>
   <style>
-  /* ======= Нейтральные токены и базовая механика ======= */
+  /* ======= Design tokens с цветовыми темами ======= */
   :root{
-    /* Нейтрали */
-    --bg:#faf9fc; --text:#0b1220; --muted:#6b7280;
-    --surface:#ffffff; --surface-2:#f6f2f9; --border:#e7eaf0;
-    --shadow-sm:0 4px 12px rgba(15,31,61,.06);
-    --shadow-md:0 10px 28px rgba(15,31,61,.10);
-    --shadow-lg:0 18px 50px rgba(15,31,61,.18);
-    --radius:16px;
-    --light-blue-2:#f6f9ff; /* мягкий фон хэдера */
-
-    /* Управление полоской над карточками */
-    --divider:#e7eaf0;      /* цвет линии */
-    --strip-height:2px;     /* 0px — полностью убрать */
-
-    /* Подсветка карточек */
-    --card-hover:#f5effa;
+    /* Тема 1: Классическая (по умолчанию) */
+    --primary:#8B1538;
+    --secondary:#E30613;
+    --accent:#F39200;
+    --accent-light:#C8A2C8;
+    --accent-dark:#6B3AA0;
+    --brand:#1E3A8A;
+    
+    --bg:#ffffff;
+    --surface:#f8f9fa;
+    --text:#1a1a1a;
+    --text-muted:#6b7280;
+    --border:#e5e7eb;
+    --shadow:0 1px 3px rgba(0,0,0,.12);
+    --shadow-hover:0 8px 16px rgba(0,0,0,.15);
+    --radius:12px;
+    
+    /* Анимации */
+    --transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* ======= Тема 1: Фиолетовый + Оранжевый ======= */
-  :root,[data-theme="violet"]{
-    --brand:#531c8d; --brand-600:#4a197f; --brand-700:#3e146f;
-    --accent:#d37737;         /* оранжевый CTA */
-    --accent-2:#c7a9ce;       /* лаванда — мягкие акценты */
-    --danger:#9a2328;         /* красный для ошибок */
+  /* Тема 2: Энергия */
+  [data-theme="energy"] {
+    --primary:#F39200;
+    --secondary:#E30613;
+    --accent:#8B1538;
+    --accent-light:#fbbf24;
+    --accent-dark:#dc2626;
+    --brand:#ea580c;
   }
 
-  /* ======= Тема 2: Бордо + Оранжевый ======= */
-  [data-theme="bordeaux"]{
-    --brand:#74081b; --brand-600:#640718; --brand-700:#4e0613;
-    --accent:#d37737;         /* оранжевый CTA */
-    --accent-2:#531c8d;       /* фиолетовый вторичный */
-    --danger:#9a2328;
-    --card-hover:#f8eef0;     /* розовато-бордовая подсветка */
+  /* Тема 3: Фиолетовые сумерки */
+  [data-theme="purple"] {
+    --primary:#6B3AA0;
+    --secondary:#8B1538;
+    --accent:#C8A2C8;
+    --accent-light:#e9d5ff;
+    --accent-dark:#581c87;
+    --brand:#7c3aed;
+  }
+
+  /* Тема 4: Океан */
+  [data-theme="ocean"] {
+    --primary:#1E3A8A;
+    --secondary:#0891b2;
+    --accent:#06b6d4;
+    --accent-light:#67e8f9;
+    --accent-dark:#0c4a6e;
+    --brand:#0369a1;
   }
 
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%}
+  html,body{height:100%;scroll-behavior:smooth}
 
   body{
-    font-family:Inter, -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
-    background:
-      radial-gradient(1200px 700px at -10% -20%, rgba(211,119,55,.10), transparent 60%),
-      radial-gradient(1200px 700px at 110% -10%, rgba(83,28,141,.10), transparent 60%),
-      var(--bg);
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background:var(--bg);
     color:var(--text);
-    line-height:1.55;
-    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    line-height:1.6;
+    transition:var(--transition);
+    -webkit-font-smoothing:antialiased;
   }
 
-  /* ======= Header ======= */
+  /* ======= Светлый Header ======= */
   .header{
-    position:sticky; top:0; z-index:50;
-    padding:.8rem 2rem 1rem; border-bottom:1px solid rgba(0,0,0,.06);
-    color:#102033;
-    background:
-      linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.85)),
-      radial-gradient(1000px 300px at 20% -40%, rgba(199,169,206,.18), transparent 60%),
-      linear-gradient(135deg, #f6f9ff, #fff);
-    backdrop-filter:saturate(1.1) blur(6px);
-    box-shadow: var(--shadow-sm);
-    display:grid; grid-template-columns:minmax(320px,1fr) minmax(360px,520px);
-    column-gap:2cm; align-items:start; overflow:hidden;
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(255,255,255,0.95);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+    padding:1rem 2rem;
+    box-shadow:var(--shadow);
   }
-  .header-bar{ position:relative; z-index:1; display:flex; flex-direction:column; gap:.25rem }
-  .brand-title{ font-weight:900; letter-spacing:.4px; font-size:1.38rem; text-transform:uppercase; color:#1f2f44 }
-  .title-right{ text-transform:uppercase; font-weight:900; letter-spacing:.5px; font-size:1.38rem; line-height:1;
-    background: linear-gradient(90deg, var(--brand), var(--accent-2), var(--brand));
-    -webkit-background-clip:text; background-clip:text; color:transparent; background-size:200% auto; animation:rightShine 8s linear infinite }
-  @keyframes rightShine{ from{ background-position: -100% 0 } to{ background-position: 200% 0 } }
 
-  .controls{ position:relative; z-index:1; display:flex; flex-direction:column; gap:.5rem }
+  .header-content{
+    max-width:1400px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:2rem;
+    align-items:center;
+  }
 
-  /* Theme switch (две кнопки) */
-  .theme-switch{ display:flex; gap:.4rem; align-items:center; margin-bottom:.1rem }
-  .theme-btn{ padding:.36rem .6rem; border:1px solid var(--border); background:#fff; border-radius:10px; cursor:pointer; font-size:.84rem; color:#374151 }
-  .theme-btn.active{ background:var(--surface-2); border-color:#d8cdea }
+  .brand-section{
+    display:flex;
+    flex-direction:column;
+    gap:0.25rem;
+  }
 
-  /* Select + search */
-  .select-wrap{ position:relative }
-  .select-marquee{ position:absolute; left:.8rem; right:2.1rem; top:50%; transform:translateY(-50%);
-    pointer-events:none; white-space:nowrap; overflow:hidden; color:#21324a; font-size:.92rem;
-    mask-image:linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 22px), transparent 100%)}
-  .select-marquee .marquee-track{ display:inline-block; padding-left:100%; animation:marquee 12s linear infinite }
-  .select-marquee .marquee-track:hover{ animation-play-state:paused }
-  @keyframes marquee{ from{ transform:translateX(0) } to{ transform:translateX(-100%) } }
+  .brand-title{
+    font-size:1.125rem;
+    font-weight:700;
+    color:var(--primary);
+    letter-spacing:-0.02em;
+  }
 
-  select, input[type="text"]{ appearance:none; padding:.5rem .8rem; border:1px solid rgba(32,49,74,.12);
-    border-radius:12px; font-size:.92rem; color:#21324a; background:#ffffffa8; box-shadow:none; width:100%;
-    transition: background-color .15s ease, border-color .15s ease }
-  select:focus, input[type="text"]:focus{ outline:none; border-color:rgba(32,49,74,.22); background:#fff }
-  select:hover, input[type="text"]:hover{ border-color:rgba(32,49,74,.28) }
-  select.marquee-active{ color:transparent; text-shadow:none }
-  select{ min-width:280px; cursor:pointer; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2321324a'><path d='M4 6l4 4 4-4z'/></svg>"); background-repeat:no-repeat; background-position:right .6rem center; background-size:16px; padding-right:2rem }
+  .brand-subtitle{
+    font-size:0.875rem;
+    color:var(--text-muted);
+    font-weight:500;
+  }
 
-  .search-wrap{ position:relative }
-  #searchInput{ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2321324a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>"); background-repeat:no-repeat; background-position:.6rem center; padding-left:2.2rem; padding-right:2.2rem }
-  #clearSearch{ position:absolute; top:50%; right:.35rem; transform:translateY(-50%); border:none; background:transparent; color:#21324a; width:28px; height:28px; border-radius:8px; cursor:pointer; font-size:1.15rem; line-height:1; display:none }
-  #clearSearch:hover{ color:#0f172a }
-  ::placeholder{ color:#7b8699 }
+  /* Бегущая строка в селекте */
+  .controls{
+    display:flex;
+    flex-direction:column;
+    gap:0.75rem;
+    min-width:360px;
+  }
+
+  .select-wrapper{
+    position:relative;
+    overflow:hidden;
+    border-radius:var(--radius);
+    border:2px solid var(--border);
+    background:var(--surface);
+    transition:var(--transition);
+  }
+
+  .select-wrapper:hover{
+    border-color:var(--primary);
+    transform:translateY(-1px);
+    box-shadow:var(--shadow-hover);
+  }
+
+  .marquee-container{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+
+  .marquee-text{
+    position:absolute;
+    white-space:nowrap;
+    animation:marquee 20s linear infinite;
+    color:var(--primary);
+    opacity:0.3;
+    font-size:0.875rem;
+    top:50%;
+    transform:translateY(-50%);
+  }
+
+  @keyframes marquee{
+    from{transform:translateX(100%) translateY(-50%)}
+    to{transform:translateX(-100%) translateY(-50%)}
+  }
+
+  select{
+    appearance:none;
+    width:100%;
+    padding:0.75rem 2.5rem 0.75rem 1rem;
+    border:none;
+    background:transparent;
+    font-size:0.9375rem;
+    color:var(--text);
+    cursor:pointer;
+    position:relative;
+    z-index:1;
+  }
+
+  .select-arrow{
+    position:absolute;
+    right:1rem;
+    top:50%;
+    transform:translateY(-50%);
+    pointer-events:none;
+    color:var(--primary);
+    transition:var(--transition);
+  }
+
+  .select-wrapper:hover .select-arrow{
+    transform:translateY(-50%) rotate(180deg);
+  }
+
+  /* Поиск с горячими клавишами */
+  .search-wrapper{
+    position:relative;
+  }
+
+  #searchInput{
+    width:100%;
+    padding:0.75rem 3rem 0.75rem 2.5rem;
+    border:2px solid var(--border);
+    border-radius:var(--radius);
+    background:var(--surface);
+    font-size:0.9375rem;
+    transition:var(--transition);
+  }
+
+  #searchInput:focus{
+    outline:none;
+    border-color:var(--primary);
+    background:white;
+    box-shadow:var(--shadow-hover);
+  }
+
+  .search-icon{
+    position:absolute;
+    left:0.875rem;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--text-muted);
+  }
+
+  .search-hotkey{
+    position:absolute;
+    right:0.875rem;
+    top:50%;
+    transform:translateY(-50%);
+    padding:0.25rem 0.5rem;
+    background:var(--border);
+    border-radius:6px;
+    font-size:0.75rem;
+    font-weight:500;
+    color:var(--text-muted);
+    font-family:monospace;
+  }
+
+  #clearSearch{
+    position:absolute;
+    right:3rem;
+    top:50%;
+    transform:translateY(-50%);
+    background:var(--primary);
+    color:white;
+    border:none;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    cursor:pointer;
+    display:none;
+    transition:var(--transition);
+    font-size:0.875rem;
+  }
+
+  #clearSearch:hover{
+    transform:translateY(-50%) scale(1.1);
+  }
+
+  /* Переключатель тем */
+  .theme-switcher{
+    position:fixed;
+    bottom:5rem;
+    right:1.5rem;
+    display:flex;
+    flex-direction:column;
+    gap:0.5rem;
+    z-index:90;
+  }
+
+  .theme-btn{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    border:3px solid white;
+    cursor:pointer;
+    transition:var(--transition);
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .theme-btn::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.2) 100%);
+    opacity:0;
+    transition:opacity 0.3s;
+  }
+
+  .theme-btn:hover{
+    transform:scale(1.15);
+    box-shadow:var(--shadow-hover);
+  }
+
+  .theme-btn:hover::after{
+    opacity:1;
+  }
+
+  .theme-btn.active{
+    transform:scale(1.2);
+    box-shadow:0 0 0 4px rgba(0,0,0,0.1);
+  }
+
+  .theme-btn[data-theme="default"]{background:linear-gradient(135deg, #8B1538, #E30613)}
+  .theme-btn[data-theme="energy"]{background:linear-gradient(135deg, #F39200, #E30613)}
+  .theme-btn[data-theme="purple"]{background:linear-gradient(135deg, #6B3AA0, #C8A2C8)}
+  .theme-btn[data-theme="ocean"]{background:linear-gradient(135deg, #1E3A8A, #06b6d4)}
 
   /* ======= Контент ======= */
-  .container{ max-width:1200px; margin:1.1rem auto; padding:0 1.25rem }
+  .container{
+    max-width:1400px;
+    margin:2rem auto;
+    padding:0 2rem;
+  }
 
-  .section-card{ background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:.85rem; box-shadow:var(--shadow-sm); transition: box-shadow .2s ease, border-color .2s ease, background .2s ease, transform .06s ease }
-  .section-card:hover{ background:linear-gradient(180deg, var(--card-hover), #fff); border-color:#e6dff0; box-shadow:0 12px 34px rgba(83,28,141,.14); transform:translateY(-1px) }
+  /* Панель управления */
+  .controls-panel{
+    display:flex;
+    gap:1rem;
+    margin-bottom:2rem;
+    flex-wrap:wrap;
+    align-items:center;
+  }
 
-  .section-header{ position:relative; padding:.56rem .85rem; background:linear-gradient(180deg, var(--light-blue-2), var(--surface)); cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; border-bottom:1px solid var(--border); border-top-left-radius:14px; border-top-right-radius:14px; box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(15,31,61,.03) }
-  .section-header::before{ content:""; position:absolute; left:0; right:0; top:0; height:var(--strip-height); background:var(--divider); border-top-left-radius:inherit; border-top-right-radius:inherit }
+  .btn{
+    padding:0.625rem 1.25rem;
+    border:none;
+    border-radius:var(--radius);
+    font-size:0.875rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:var(--transition);
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+  }
 
-  .section-title{ display:flex; align-items:center; gap:.6rem; font-size:1rem; font-weight:800; letter-spacing:.25px; color:var(--brand-700) }
-  .section-title::before{ content:""; width:12px; height:12px; border-radius:50%; background:var(--brand-700); box-shadow:0 1px 0 rgba(0,0,0,.08) }
-  .section-arrow{ font-size:.95rem; color:#6b7280; transition: transform .2s ease, color .15s ease }
-  .section-header:hover .section-arrow{ color:var(--brand) }
-  .section-arrow.expanded{ transform:rotate(180deg) }
+  .btn-primary{
+    background:var(--primary);
+    color:white;
+  }
 
-  .section-content{ padding:0 .85rem .85rem; max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease, opacity .25s ease, padding-top .2s ease }
-  .section-content.expanded{ padding:.85rem; max-height:1500px; opacity:1 }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-hover);
+  }
 
-  .algorithm-block{ margin-bottom:.9rem }
-  .algorithm-block:last-child{ margin-bottom:0 }
-  .algorithm-block h4{ color:#233154; font-size:.95rem; font-weight:500; margin-bottom:.48rem; letter-spacing:.2px; display:flex; align-items:center; gap:.5rem }
-  .algorithm-block h4::before{ content:""; width:10px; height:10px; border-radius:50%; background:var(--brand-700) }
-  .algorithm-block p{ font-size:.94rem; color:#3c465a; margin:.28rem 0 }
-  .algorithm-block ul, .algorithm-block ol{ margin-left:1.15rem; margin-top:.3rem }
-  .algorithm-block ul{ list-style:none; padding-left:1rem }
-  .algorithm-block ul li{ position:relative }
-  .algorithm-block ul li::before{ content:""; position:absolute; left:-1rem; top:0.72em; width:8px; height:8px; border-radius:50%; background:var(--brand-700) }
-  .algorithm-block ol li::marker{ color:var(--brand-700) }
-  .algorithm-block li{ margin:.28rem 0; color:#475569; font-size:.94rem }
+  /* Креативные карточки контента */
+  .section-card{
+    background:white;
+    border-radius:var(--radius);
+    margin-bottom:1.5rem;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    transition:var(--transition);
+    position:relative;
+  }
 
-  code{ background:#0b12200a; border:1px solid #e6ebf1; padding:.15rem .35rem; border-radius:8px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace }
+  .section-card::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:3px;
+    background:var(--primary);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform 0.3s ease;
+  }
 
-  .action-buttons{ display:flex; gap:.5rem; margin-top:.75rem; padding-top:.75rem; border-top:1px solid var(--border); flex-wrap:wrap }
-  .action-btn{ padding:.42rem .68rem; border:1px solid #e5eaf1; border-radius:10px; cursor:pointer; font-size:.86rem; font-weight:500; letter-spacing:.2px; display:inline-flex; align-items:center; gap:.4rem; transition: background-color .15s ease, color .15s ease, border-color .15s ease }
-  .action-btn:hover{ border-color:#d7deeb }
-  .btn-primary{ background:#fff2e9; color:#4a2a0f; border-color:#f1d1b7 }
-  .btn-primary:hover{ background:#ffe6d2 }
-  .btn-success{ background:#f2f7ff; color:#1f2b69 }
-  .btn-success:hover{ background:#e6efff }
-  .btn-secondary{ background:#f5f7fb; color:#374151 }
-  .btn-secondary:hover{ background:#e9eef8; color:#111827 }
+  .section-card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--shadow-hover);
+  }
 
-  /* Floating buttons */
-  .floating-buttons{ position:fixed; bottom:1.1rem; right:1.1rem; display:flex; flex-direction:row; gap:.55rem; z-index:1000 }
-  .floating-btn{ background:linear-gradient(135deg, var(--brand), var(--accent-2)); color:#fff; border:none; padding:.8rem; border-radius:14px; width:50px; height:50px; cursor:pointer; box-shadow:var(--shadow-lg); transition: transform .08s ease, box-shadow .2s ease, filter .2s ease; font-size:.95rem; display:flex; align-items:center; justify-content:center }
-  .floating-btn:hover{ transform:translateY(-2px); box-shadow:0 16px 40px rgba(15,31,61,.22); filter:saturate(1.05) }
-  .floating-btn.pink{ background:linear-gradient(135deg, var(--accent-2), var(--accent)) }
+  .section-card:hover::before{
+    transform:scaleX(1);
+  }
 
-  .highlight{ background:linear-gradient(180deg, rgba(211,119,55,.20), rgba(83,28,141,.10)); padding:1px 4px; border-radius:6px; box-decoration-break:clone }
+  /* Интерактивные заголовки */
+  .section-header{
+    padding:1.25rem 1.5rem;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    transition:var(--transition);
+    position:relative;
+    overflow:hidden;
+  }
 
-  .no-results{ text-align:center; padding:2.2rem; color:#6b7280; font-size:1rem; position:relative }
-  .no-results::before{ content:"🔎"; display:block; font-size:1.6rem; margin-bottom:.4rem; opacity:.85 }
+  .section-header::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:var(--primary);
+    opacity:0;
+    transition:opacity 0.3s;
+  }
+
+  .section-header:hover::after{
+    opacity:0.05;
+  }
+
+  .section-title{
+    font-size:1.125rem;
+    font-weight:700;
+    color:var(--text);
+    transition:var(--transition);
+    position:relative;
+    z-index:1;
+  }
+
+  .section-header:hover .section-title{
+    color:var(--primary);
+    transform:translateX(8px);
+  }
+
+  .section-arrow{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:var(--surface);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:var(--transition);
+    position:relative;
+    z-index:1;
+  }
+
+  .section-arrow svg{
+    width:16px;
+    height:16px;
+    transition:transform 0.3s ease;
+  }
+
+  .section-arrow.expanded svg{
+    transform:rotate(180deg);
+  }
+
+  .section-header:hover .section-arrow{
+    background:var(--primary);
+    color:white;
+  }
+
+  /* Плавное раскрытие с эффектом */
+  .section-content{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .section-content.expanded{
+    padding:1.5rem;
+    max-height:2000px;
+    opacity:1;
+  }
+
+  .algorithm-block{
+    margin-bottom:1.25rem;
+    padding:1rem;
+    background:var(--surface);
+    border-radius:var(--radius);
+    transition:var(--transition);
+  }
+
+  .algorithm-block:hover{
+    background:white;
+    box-shadow:var(--shadow);
+  }
+
+  .algorithm-block h4{
+    color:var(--primary);
+    font-size:1rem;
+    font-weight:600;
+    margin-bottom:0.5rem;
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+  }
+
+  .algorithm-block h4::before{
+    content:'▸';
+    color:var(--accent);
+    font-size:1.25rem;
+    transition:var(--transition);
+  }
+
+  .algorithm-block:hover h4::before{
+    transform:translateX(4px);
+  }
+
+  .algorithm-block p,
+  .algorithm-block li{
+    color:var(--text-muted);
+    font-size:0.9375rem;
+    line-height:1.7;
+  }
+
+  .algorithm-block ul,
+  .algorithm-block ol{
+    margin-left:1.5rem;
+    margin-top:0.5rem;
+  }
+
+  code{
+    background:var(--surface);
+    padding:0.125rem 0.375rem;
+    border-radius:4px;
+    font-family:'Fira Code', monospace;
+    font-size:0.875rem;
+    color:var(--primary);
+  }
+
+  /* Кнопки действий */
+  .action-buttons{
+    display:flex;
+    gap:0.75rem;
+    margin-top:1rem;
+    padding-top:1rem;
+    border-top:1px solid var(--border);
+    flex-wrap:wrap;
+  }
+
+  .action-btn{
+    padding:0.5rem 1rem;
+    border:2px solid transparent;
+    border-radius:var(--radius);
+    font-size:0.875rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:var(--transition);
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+  }
+
+  .btn-action-primary{
+    background:var(--primary);
+    color:white;
+  }
+
+  .btn-action-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-hover);
+  }
+
+  .btn-action-secondary{
+    background:var(--surface);
+    color:var(--text);
+    border-color:var(--border);
+  }
+
+  .btn-action-secondary:hover{
+    border-color:var(--primary);
+    color:var(--primary);
+  }
+
+  /* Плавающие кнопки */
+  .floating-buttons{
+    position:fixed;
+    bottom:1.5rem;
+    right:1.5rem;
+    display:flex;
+    flex-direction:column;
+    gap:0.75rem;
+    z-index:80;
+  }
+
+  .floating-btn{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:var(--primary);
+    color:white;
+    border:none;
+    cursor:pointer;
+    box-shadow:var(--shadow-hover);
+    transition:var(--transition);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.25rem;
+  }
+
+  .floating-btn:hover{
+    transform:translateY(-4px) scale(1.1);
+    box-shadow:0 12px 24px rgba(0,0,0,0.2);
+  }
+
+  /* Подсветка поиска */
+  .highlight{
+    background:linear-gradient(180deg, transparent 40%, var(--accent-light) 40%, var(--accent-light) 85%, transparent 85%);
+    padding:0 2px;
+    font-weight:600;
+    color:var(--primary);
+  }
+
+  /* Нет результатов */
+  .no-results{
+    text-align:center;
+    padding:4rem 2rem;
+    color:var(--text-muted);
+    font-size:1.125rem;
+  }
+
+  .no-results::before{
+    content:'🔍';
+    display:block;
+    font-size:3rem;
+    margin-bottom:1rem;
+    opacity:0.5;
+  }
 
   /* Модалка */
-  .source-modal{ display:none; position:fixed; z-index:2000; inset:0; background:rgba(8,17,37,.3); backdrop-filter: blur(6px) }
-  .modal-content{ background:var(--surface); margin:3% auto; padding:1.1rem 1.1rem 1.2rem; border-radius:18px; width:88%; max-width:980px; max-height:85vh; overflow-y:auto; position:relative; box-shadow: var(--shadow-lg); border:1px solid var(--border) }
-  .modal-content h2{ font-size:1.12rem; margin-bottom:.8rem; color:var(--brand-700) }
-  .close-modal{ position:absolute; top:.85rem; right:.85rem; font-size:1.3rem; cursor:pointer; color:#6b7280; line-height:1; padding:.2rem .4rem; border-radius:10px; transition:background .2s ease,color .2s ease }
-  .close-modal:hover{ color:#1f2937; background:#f2f5f9 }
+  .source-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.8);
+    backdrop-filter:blur(8px);
+    z-index:200;
+  }
+
+  .modal-content{
+    background:white;
+    margin:5% auto;
+    padding:2rem;
+    border-radius:var(--radius);
+    width:90%;
+    max-width:800px;
+    max-height:80vh;
+    overflow-y:auto;
+    position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  }
+
+  .close-modal{
+    position:absolute;
+    top:1rem;
+    right:1rem;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:var(--surface);
+    border:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:var(--transition);
+  }
+
+  .close-modal:hover{
+    background:var(--primary);
+    color:white;
+    transform:rotate(90deg);
+  }
 
   /* Адаптив */
-  @media (max-width: 900px){ .header{ grid-template-columns:1fr; row-gap:.75rem } .controls{ order:2 } .brand-title,.title-right{ font-size:1.2rem } }
-  @media (max-width: 768px){ .section-header{ padding:.5rem .8rem } .section-title{ font-size:.95rem } .action-btn{ padding:.36rem .52rem; font-size:.82rem } .floating-btn{ width:46px; height:46px; font-size:.9rem; border-radius:12px } }
+  @media (max-width: 900px){
+    .header-content{
+      grid-template-columns:1fr;
+      gap:1rem;
+    }
+    .controls{
+      min-width:100%;
+    }
+  }
 
-  /* Дарк-тема авто */
-  @media (prefers-color-scheme: dark){
-    :root{ --bg:#0b1220; --text:#e5e7eb; --muted:#9aa3b2; --surface:#0e1424; --surface-2:#0b1220; --border:#16223a; --light-blue-2:#0e1424; --divider:#24304a }
-    .section-card{ border-color:#16223a }
-    .section-card:hover{ box-shadow:0 12px 34px rgba(83,28,141,.28) }
-    .section-header{ background:linear-gradient(180deg,var(--light-blue-2),#0e1424); border-bottom-color:#16223a }
-    code{ background:#0b1220; border-color:#16223a }
-    .btn-secondary{ background:#131a2c; color:#cfd6df; border-color:#16223a }
-    .modal-content{ border-color:#16223a }
+  @media (max-width: 768px){
+    .container{
+      padding:0 1rem;
+    }
+    .floating-buttons{
+      bottom:1rem;
+      right:1rem;
+    }
+    .theme-switcher{
+      bottom:4rem;
+      right:1rem;
+    }
+    .theme-btn{
+      width:36px;
+      height:36px;
+    }
+  }
+
+  /* Клавиатурная навигация */
+  :focus-visible{
+    outline:3px solid var(--primary);
+    outline-offset:2px;
   }
   </style>
 </head>
 <body>
   <div class="header">
-    <div class="header-bar">
-      <span class="brand-title">Методика организации работы блока реализации и развития услуг</span>
-      <span class="title-right">РОССЕТИ КУБАНЬ</span>
-    </div>
-    <div class="controls">
-      <div class="theme-switch" role="group" aria-label="Переключение темы">
-        <button class="theme-btn active" data-theme="violet">Фиолет + Оранж</button>
-        <button class="theme-btn" data-theme="bordeaux">Бордо + Оранж</button>
+    <div class="header-content">
+      <div class="brand-section">
+        <h1 class="brand-title">Методика организации работы блока реализации и развития услуг</h1>
+        <div class="brand-subtitle">РОССЕТИ КУБАНЬ</div>
       </div>
-      <div class="select-wrap">
-        <select id="reglamentSelect">
-          <option value="r057-2022">Р 057-2022 - РЕГЛАМЕНТ ПО ВЫЯВЛЕНИЮ, СОКРАЩЕНИЮ И ИСКЛЮЧЕНИЮ БЕЗДОГОВОРНОГО И БЕЗУЧЕТНОГО ПОТРЕБЛЕНИЯ ЭЛЕКТРОЭНЕРГИИ</option>
-          <option value="other" disabled>Другие регламенты (будут добавлены)</option>
-        </select>
-        <div id="selectMarquee" class="select-marquee" aria-hidden="true" style="display:none;"></div>
-      </div>
-      <div class="search-wrap">
-        <input type="text" id="searchInput" placeholder="Поиск по ключевым словам..." />
-        <button id="clearSearch" aria-label="Очистить поиск">×</button>
+      <div class="controls">
+        <div class="select-wrapper">
+          <div class="marquee-container">
+            <div class="marquee-text">Выявление и сокращение потерь • Бездоговорное потребление • Безучетное потребление • Акты и протоколы</div>
+          </div>
+          <select id="reglamentSelect">
+            <option value="r057-2022">Р 057-2022 - Регламент по выявлению БД/БУ потребления</option>
+            <option value="other" disabled>Другие регламенты (в разработке)</option>
+          </select>
+          <div class="select-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="search-wrapper">
+          <div class="search-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+          </div>
+          <input type="text" id="searchInput" placeholder="Поиск по регламенту..." />
+          <button id="clearSearch" aria-label="Очистить">×</button>
+          <div class="search-hotkey">Ctrl+K</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="container" id="contentContainer"></div>
+  <div class="container">
+    <div class="controls-panel">
+      <button class="btn btn-primary" id="collapseAllBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 14h16M4 10h16"/>
+        </svg>
+        Свернуть все
+      </button>
+      <button class="btn btn-primary" id="expandAllBtn" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 8h16M4 12h16M4 16h16"/>
+        </svg>
+        Развернуть все
+      </button>
+    </div>
+    <div id="contentContainer"></div>
+  </div>
+
+  <div class="theme-switcher">
+    <button class="theme-btn active" data-theme="default" title="Классическая тема"></button>
+    <button class="theme-btn" data-theme="energy" title="Энергия"></button>
+    <button class="theme-btn" data-theme="purple" title="Фиолетовые сумерки"></button>
+    <button class="theme-btn" data-theme="ocean" title="Океан"></button>
+  </div>
 
   <div class="floating-buttons">
-    <button class="floating-btn" id="scrollTopBtn" title="Наверх" style="display:none;">▲</button>
-    <button class="floating-btn pink" id="collapseAllBtn" title="Свернуть все" style="display:none;">▾</button>
+    <button class="floating-btn" id="scrollTopBtn" title="Наверх" style="display: none;">↑</button>
   </div>
 
   <div id="sourceModal" class="source-modal">
     <div class="modal-content">
-      <span class="close-modal">&times;</span>
+      <button class="close-modal">×</button>
       <h2>Исходный документ</h2>
       <div id="sourceText"></div>
     </div>
   </div>
 
   <script>
-    /* ======= Алгоритмы (как в твоём исходнике, без правок) ======= */
+    // ======= Данные алгоритмов =======
     const algorithms = {
       'r057-2022': [
         { id: 'normative', title: 'НОРМАТИВНЫЕ ПОЛОЖЕНИЯ', content: { actions: [ { text: 'Настоящий Регламент работы ПАО «Россети Кубань» по выявлению, сокращению и исключению бездоговорного, безучетного потребления электроэнергии, на основе Стандарта утвержденного распоряжением ПАО «Россети» от 20.11.2017 №631р.' } ], keyPoints: [ 'Регламентом указан порядок работ на основании ПП РФ №442 (розничные рынки), ПП РФ №354 (коммунальные услуги), ПП РФ №861 (технологическое присоеденение)', 'Единые требования к фото/видео фиксации нарушений связанных с учетом ЭЭ, расчет актов БУ/БД, протоколам комиссий и хранению материалов', 'Разграничение порядка введения ограничений: юрлица — по ПП РФ №442; граждане — по ПП РФ №354' ], responsible: 'Все подразделения ФЭС/РЭС, СРУ, УРРУ, СУЭ', deadline: 'Постоянно' } },
+        
         { id: 'general', title: 'ОБЩИЕ ПОЛОЖЕНИЯ', content: { actions: [{ text: 'Знать ключевые сроки документооборота, порядок расчетов Актов БУ/БД' }], keyPoints: [ 'Договор энергоснабжения с гражданином считается заключённым: с даты технологического присоеденения, с даты приобретения указанным гражданином права собственности или иного законного права на это энергопринимающее устройство, либо с даты присвоения статуса гарантирующего поставщика соответствующей организации (в зависимости от того, какая дата наступила позднее) — но не более чем за 3 года до выявления факта. Подтверждается документами об оплате. (П. 73 ПП 442)', 'Потребление после расторжения договора до заключения нового — бездоговорное. (П. 31 ПП 442)', 'В случае если заключен договор энергоснабжения при «ненадлежащем ТП», ГП инициирует полное ограничение до устранения причин. (П. 47 ПП 442)', 'Ограничение режима потребления для граждан — по ПП РФ №354; факты самовольного подключения после ограничения квалифицируются как безучётное.' ], responsible: 'Все сотрудники', deadline: 'Постоянно' } },
+
         { id: 'info-activities', title: 'ИНФОРМАЦИОННЫЕ МЕРОПРИЯТИЯ', content: { actions: [ { text: 'Профилактические мероприятия направленные на предупреждение бездоговорного и безучетного потребления', list: [ 'Семинары/«круглые столы», по вопросам бездоговорного и безучетного потребления электроэнергии', 'Пресс-конференции, интервью, видеосюжеты, публикации', 'Сайты РСК/ЭСК, соцсети, информационные стенды', 'Брошюры: ст. 7.19 КоАП РФ; почему выгодно иметь договор', 'создание и развитие в информационно-телекоммуникационной сети «Интернет» целевых коммуникационных программ' ] } ], responsible: 'СРУ/УРРУ совместно с пресс‑службой/ЭСК', deadline: 'По годовому плану' } },
+
         { id: 'parallel-connection', title: 'ЗАКЛЮЧЕНИЕ ДОГОВОРА ЭНЕРГОСНАБЖЕНИЯ ПАРАЛЛЕЛЬНО С ПРОЦЕДУРОЙ НОВОГО ТП', content: { steps: [ 'Не позднее двух рабочих дней, с даты заключения договора ТП: СРУ направляет в ЭСК комплект документов заявителя', 'ЭСК направляет подписанный проект договора энергоснабжения в адрес сетевой организации; при замечаниях — уведомляет СРУ', 'После получения 2 экземпляров подписанного со стороны ЭСК проекта договора, СРУ осуществляет его передачу на УРРУ для подписания со стороны заявителя.', 'По завершении ТП: СРУ не позднее 2 рабочих дней со дня подписания заявителем акта ТП, СРУ отправляет в ЭСК акт ТП', 'Если заявитель — физлицо с одним источником питания: договор считается заключённым со дня размещения акта ТП в ЛК потребителя', 'Если заявитель не вернул подписанный проект/протокол разногласий — проект ЭСК считается отозванным' ], deadlines: [ 'Все передачи документов — осуществляются в пределах 2 рабочих дней от события', 'Информирование ГП о размещении акта ТП — не позднее конца рабочего дня' ], responsible: 'СРУ, УРРУ, ЭСК', control: 'Недопущение нарушений сроков подписания и передачи документов' } },
+
         { id: 'no-contract-consumption', title: 'МЕРОПРИЯТИЯ НАПРАВЛЕННЫЕ НА ОПРЕДЕЛЕНИЕ ПОТРЕБЛЕНИЯ В ОТСУТСТВИИ ДОГОВОРА ЭНЕРГОСНАБЖЕНИЯ', content: { steps: [ 'Через 2 месяца после установленной даты «приёма на обслуживание» ГП: СРУ/УРРУ проверяют наличие письменных договоров у всех потребителей', 'Источники сведений: ГП, иные ЭСК/производители, прежний ГП, сам потребитель с копией договора', 'СРУ/УРРУ определяют объём потребления с даты принятия на обслуживание и предъявляют ГП требования по оплате услуг передачи' ], responsible: 'СРУ, УРРУ', deadline: 'По истечении 2 месяцев от даты приёма ГП' } },
+
         { id: 'restriction-control', title: 'ВВЕДЕНИЕ ОГРАНИЧЕНИЯ И КОНТРОЛЬ', content: { steps: [ 'Выбирать способ, максимально препятствующий повторному подключению (приоритет — отключение ответвления на опоре ВЛ 0,4/10 кВ)', 'Факты введенного ограничения фиксировать Актом введения ограничения + фото/видео (место, объект, способ отключения, показания ПУ)', 'Допустимо отключение на коммутационных аппаратах, если отключение на опоре невозможно или требуется включение (отключение объектов жилищно-коммунального хозяйства)', 'В случае выявления бездоговорного потребления при введении повторного ограничения юридических лиц —  РЭС выполняет технические мероприятия, затрудняющие или исключающие самовольные подключения: охранные кожухи, демонтаж оборудования, замена голого провода на СИП и др.' ], responsible: 'РЭС', deadline: 'По заявкам и графикам контроля', control: 'Периодические проверки введённых ограничений' } },
+
         { id: 'planning-detection', title: 'ПЛАНИРОВАНИЕ РАБОТ ПО ВЫЯВЛЕНИЮ НЕУЧТЕННОГО ПОТРЕБЛЕНИЯ', content: { actions: [ { text: 'Действия УРРУ под контролем СРУ', list: [ 'Ежемесячный пофидерный анализ потерь (относительные и абсолютные)', 'Анализ динамики потребления и оплат у юрлиц/физлиц', 'Формирование «группы риска» и план внеплановых проверок', 'Подготовка рейдов с привлечением полиции, СМИ' ] } ], riskCriteria: [ 'Несоответствие замеренного расхода потребления к используемому оборудованию', 'Необоснованный недопуск/переносы', 'Ранее уличённые в хищении', 'Потребители с введённым ограничением', 'Информация из разных источников о возможном хищении' ], responsible: 'УРРУ', deadline: 'Ежемесячно', raids: 'Рейды ≥ 1 раз в месяц в каждом РЭС; допускаются перекрёстные проверки между филиалами' } },
+
         { id: 'consumption-analysis', title: 'АНАЛИЗ ДАННЫХ О ТЕКУЩЕМ ПОТРЕБЛЕНИИ', content: { steps: [ 'Сравнивать динамику потребления и оплат за прошлые периоды', 'Использовать среднестатистические профили по типам (1/2/3‑комн., город/село, базовый набор техники)', 'Выбирать фидера с максимальными потерями (в т.ч. в абсолютных единицах) как приоритет для рейдов', 'Осуществлять полный охват имеющихся потребителей электроэнергии по очагам потерь', 'Взять на особый контроль потребителей, которые допустили в предыдущие отчетные периоды неучтенное потребление, а также режим потребления которых был ограничен по заявкам ГП' ], responsible: 'УРРУ', deadline: 'Перед каждым рейдом' } },
+
         { id: 'check-preparation', title: 'ПОДГОТОВКА К ПРОВЕДЕНИЮ ПРОВЕРОК НА ФАКТ НЕУЧТЕННОГО ПОТРЕБЛЕНИЯ', content: { sources: [ 'Данные ГП/ЭСК (п.123, 125 ПП 442)', 'Обращения граждан/юрлиц (в т.ч. анонимные)', 'Визуальное обнаружение признаков', 'Пофидерный анализ потерь', 'Информация по введённым ограничениям', 'Заявки на ТП, переоформление актов ТП, восстановление документов', 'Сравнение темпов строительства с приростом договоров', 'Информация подразделения безопасности' ], actions: [ { text: 'Полученные сведения о возможных фактах неучтенного потребления электрической энергии должны быть проверены ФЭС, УРРУ в течение одного рабочего дня с момента ее получения; при необходимости привлекать отдел безопасности, МВД' } ], responsible: 'ФЭС, УРРУ', deadline: '1 рабочий день с момента получения информации' } },
+
         { id: 'conducting-checks', title: 'ПОРЯДОК ПРОВЕДЕНИЕ ПРОВЕРОК НА ФАКТ НЕУЧТЕННОГО ПОТРЕБЛЕНИЯ', content: { steps: [ 'Сообщить о проверке ГП и проверяемому после прибытия проверяющей группы на объект проверки', 'Представиться и предъявить удостоверение; разъяснить цель и основание', 'Зафиксировать полномочия представителя потребителя на участие в проверке (в том числе посредством фото/видео фиксации)', 'Проводить фото/видео отображающую дату/время проверки: общий план объекта, точка присоединения (№ опоры/ТП/РП/ПС), узлы учёта, пломбы/ЗВК/АМ‑пломбы', 'Указать в акте сведения о фото/видеофиксации; по возможности вести видеозапись в момент допуска и подписания', 'При значимых объёмах (≥150 кВт мощности или >5 000 кВт⋅ч) — консультации СПСДФ/безопасности по телефону/видеосвязи', 'При необходимости — звонок в дежурную часть МВД: получить № КУСП и ФИО дежурного и указать их в акте', 'Предложить потребителю внести письменные объяснения и предоставить копию документа о полномочиях', 'Сохранность и возврат оригиналов документов потребителю', 'Разъяснить порядок ТП/заключения договора', 'Акт может быть составлен в отсутствие лица при надлежащем уведомлении и обязательной фото/видеофиксации', 'Отказ от подписи/присутствия фиксируется с указанием причин', 'Обязательно указать данные ранее установленных контрольных пломб и приложить подтверждающие документы', 'Для нового собственника — сфотографировать правоустанавливающий документ и приложить', 'Для юрлица >670 кВт — отметить отсутствие акта допуска Ростехнадзора (если выявлено)', 'При недопуске — акт недопуска с двумя свидетелями; силовые методы исключены' ], nonAdmission: [ 'Оформить акт недопуска с 2 свидетелями', 'При угрозах/агрессии — привлечение полиции' ], responsible: 'Персонал РЭС/УРРУ', deadline: 'На месте проверки' } },
+
         { id: 'calculation-unaccounted', title: 'РАСЧЁТ БЕЗУЧЁТНОГО ПОТРЕБЛЕНИЯ (ЮРЛИЦА)', content: { period: 'От предыдущей проверки до выявления факта, либо с даты в которой должна была быть проведена проверка, но не более чем за 4 380 часов (≈6 мес.)', formulas: [ { title: 'При наличии Pmax:', formula: 'W = Pmax × T' }, { title: 'При отсутствии Pmax ИЛИ ЕСЛИ было выявлено использование потребителем мощности, величина которой превышает величину максимальной мощности:', list: [ 'Однофазный: W = (Iдоп.дл × Uф.ном × cosφ × T) / 1000', 'Трёхфазный: W = (3 × Iдоп.дл × Uф.ном × cosφ × T) / 1000' ] } ], parameters: [ 'cosφ = 0,9 (при отсутствии данных)', 'Iдоп.дл — допустимая длительная токовая нагрузка вводного провода (кабеля), А', 'Uф.ном = 0,22 кВ, номинальное фазное напряжение', 'Часы принимаются 24/7 вне зависимости от фактического режима' ], correction: 'При выявлении электроприёмников, подключённых в обход счётчика в пределах балансовой принадлежности потребителя, объём БУП рассчитывается без уменьшения на ранее оплаченные суммы за расчётный период акта.', responsible: 'Назначенное лицо СУЭ/СРУ/УРРУ', deadline: '2 рабочих дня с даты составления акта' } },
+
         { id: 'calculation-unaccounted-phys', title: 'РАСЧЁТ БЕЗУЧЁТНОГО ПОТРЕБЛЕНИЯ (ФИЗЛИЦА)', content: { unauthorizedConnection: [ 'Период: с даты предыдущей проверки, но не более 3 мес. до месяца выявления; до даты устранения нарушения (п.62 ПП 354)', 'Расчёт: по нормативу × 10' ], meterIntervention: [ 'Период: с даты установки пломб/ЗВК или предыдущей проверки, но не более 3 мес.; до даты устранения (п.81(11) ПП 354)', 'Примеры вмешательств: механические повреждения, отверстия/трещины, доступ к узлам коммутации, отсутствие/повреждения пломб, антимагнитные пломбы' ], correction: [ 'Снижение периода по документально подтверждённому отсутствию проживающих (командировка, лечение, билеты, гостиница, временная регистрация, охрана жилья и др.)', 'При потреблении «мимо ПУ» рассчитанный объём не уменьшается на ранее оплаченное' ], responsible: 'Назначенное лицо СУЭ/СРУ/УРРУ', deadline: '2 рабочих дня с даты составления акта' } },
+
         { id: 'contractless-calculation', title: 'РАСЧЁТ БЕЗДОГОВОРНОГО ПОТРЕБЛЕНИЯ', content: { period: 'Максимум 8 760 часов (1 год)', periodDetails: [ { title: 'Самовольное подключение:', text: 'от даты предыдущей контрольной проверки объекта сети до выявления' }, { title: 'Потребление в период полного ограничения:', text: 'от предыдущей проверки ограничения/предыдущего акта — что позже — до выявления' }, { title: 'При смене собственника:', text: 'новый собственник подаёт заявление ГП в течение 30 дней; потребление с даты перехода права не считается бездоговорным при соблюдении условий' } ], formulas: [ { title: 'Формулы:', list: [ 'Однофазный: W = (Iдоп.дл × Uф.ном × cosφ × Tбд) / 1000', 'Трёхфазный: W = (3 × Iдоп.дл × Uф.ном × cosφ × Tбд) / 1000' ] } ], pricing: [ 'Стоимость объема бездоговорного электропотребления по акту определяется СРУ, УРРУ с применением цен (тарифов) на электрическую энергию для соответствующей категории потребителей (без НДС), известных за последний расчетный период на дату составления акта бездоговорного потребления.' ], important: 'Объем бездоговорного электропотребления не включается в объем оказанных услуг!', responsible: 'СРУ, УРРУ', deadline: '2 рабочих дня с даты составления акта' } },
+
         { id: 'meter-malfunction', title: 'ПОРЯДОК ДЕЙСТВИЙ ПРИ ВЫЯВЛЕНИИ НЕИСПРАВНОСТИ ПРИБОРА УЧЁТА', content: { steps: [ 'Составить акт проверки по п.173 ПП 442 с обязательной фото/видеофиксацией', 'При непригодности ПУ (без факта безучётного) — перерасчёт с даты предыдущей проверки (или плановой) до даты акта', 'Для приборов в ИСУЭ — перерасчёт за последние 3 расчётных периода', 'Для потребителей коммунальных услуг — расчёт по п.59 и абз.4 п.60.1 ПП 354 (при истечении МПИ и т.п.)' ], responsible: 'СУЭ/УРРУ', deadline: 'В момент проверки/по факту выявления' } },
+
         { id: 'commission-review', title: 'ПОРЯДОК КОМИССИОННОГО РАССМОТРЕНИЯ АКТОВ О НЕУЧТЕННОМ (БЕЗДОГОВОРНОМ) ПОТРЕБЛЕНИИ', content: { structure: [ 'Создаются Комиссии УРРУ и ФЭС приказом по ФЭС', 'Заседания: УРРУ — постоянно, ФЭС — по необходимости', 'Состав не менее 3 человек; в ФЭС — зам. директора по РРУ, представитель СПСДФ, представитель отдела безопасности' ], tasks: [ 'Проверка технической обоснованности и корректности оформления актов', 'Уточнение и проверка обстоятельств выявленного нарушения', 'Принятие решения: утверждение расчётов/передача на списание/аннулирование', 'Все решения фиксируются под протокол', 'Передаче актов о бездоговорном потреблении в работу СПСДФ для проведения претензионно-исковой работы' ], timing: [ 'Акты о неучётнном(безучетном) потреблении:  передаются в течение 3 рабочих дней в соответствующее подразделение ЭСК с расчётом и материалами', 'Акты о выявлении бездоговорного потребления: передаются в течение 2 рабочих дней — передача в УРРУ/ФЭС с расчётом и материалами' ], responsible: 'Председатели комиссий УРРУ/ФЭС' } },
+
         {id:'damage-compensation',title:'ПОРЯДОК ВОЗМЕЩЕНИЯ УЩЕРБА ОТ НЕУЧТЕННОГО ПОТРЕБЛЕНИЯ ЭЛЕКТРИЧЕСКОЙ ЭНЕРГИИ', content: { overview: 'Акты о неучтенном потреблении электрической энергии при определении объема электрической энергии (мощности), подлежащей покупке соответствующей сетевой организацией для целей компенсации потерь электрической энергии, а также при определении объема оказанных услуг по передаче электрической энергии учитываются в том расчетном периоде, в котором соответствующие акты были составлены (п. 193 ПП № 442).',steps:['РСК передаёт в адрес ЭСК составленные акты с приложением документов подтверждающие расчетный период, расчет объема оформленный справкой-расчетом, материалы фотофиксации и (или) видеофиксации выявленного факта безучетного потребления электрической энергии','ЭСК включает акты в объём в оказанные услуг, и передает в адрес РСК реестр включенных актов/счёт потребителю','При отсутствии оплаты Потребителем безучетного электропотребления, предъявляемого по акту о неучтенном потреблении электрической энергии, претензионно-исковую работу по взысканию с Потребителя оплаты выставленного счета проводит ЭСК.','В случае отказа Потребителя от уплаты выставленного счета и взыскания оплаты через суд, РСК в обязательном порядке привлекается в качестве 3-его лица для участия в судебных заседаниях.'],deadlines:['Передача в составленных актов в адрес ЭСК — 3 рабочих дня с даты составления акта','Реестр оплат, актов включенных в объем оказанных услуг — ежемесячно'],responsible:'СРУ/УРРУ' } },
+
         { id: 'cost-recovery', title: 'ПОРЯДОК ВЗЫСКАНИЕ ПО БЕЗДОГОВОРНОМУ ПОТРЕБЛЕНИЮ', content: { steps: [ 'Расчёт стоимости бездоговорного потребления, формируется без НДС. Составляется в двух экземплярах, подписывается лицом, выполнившим расчет, и утверждается председателем Комиссии УРРУ', 'Один экземпляр справки-расчета вместе с копией акта о бездоговорном потреблении (в срок не более 2 рабочих дней после составления Акта) СРУ передает в отдел бухгалтерского и налогового учета', 'В течение 1 рабочего дня после получения указанных документов) выписывается счет для оплаты рассчитанного объема бездоговорного электропотребления для передачи лицу, допустившему бездоговорное потребление электроэнергии', 'В случае неоплаты лицом, осуществлявшим бездоговорное электропотребление, направленного счета в течение 10 дней со дня его получения, СРУ, в течение 3 рабочих дней после конечного срока оплаты готовит и по решению комиссии ФЭС передает в СПСДФ материалы для проведения претензионно-исковой работы по признанию акта и взысканию стоимости объема бездоговорного электропотребления в принудительном порядке.' ], nonPayment: [ 'СПСДФ направляет лицу, допустившему бездоговорное потребление досудебное уведомление (претензию) о добровольной оплате стоимости объема', 'По исполнительному листу — направление в ФССП ≤ 10 р.д. после получения, но не позднее 1 месяца с даты вступления решения в силу; при возврате — повторно через 6 мес. либо раньше при изменении имущественного положения' ], documents: [ 'Оригинал акта и расчёта', 'Материалы фото/видео, акты обследований', 'Подтверждение направления счёта/претензии', 'Доп.сведения о должнике (1С/СПАРК/КПК «ТП» и пр.)' ], responsible: 'СРУ → Бухгалтерия → СПСДФ', deadline: 'См. выше' } },
+
         { id: 'law-enforcement', title: 'ЗАЯВЛЕНИЯ В ПРАВООХРАНИТЕЛЬНЫЕ ОРГАНЫ', content: { timing: [ 'В течение 7 р.д. с даты акта — обязательное направление материалов (принцип неотвратимости)', 'В 4 р.д. руководитель подразделения направляет копию акта в безопасность', 'Безопасность направляет заявления в 3 р.д. с момента получения акта' ], forms: [ 'Физлица — Прил. 13', 'Юрлица/ИП — Прил. 14', 'Сумма >250 тыс. руб. — Прил. 14.1', 'После введения ограничения — Прил. 14.2', 'Суммарная мощность >150 кВт, U>1000 В — Прил. 14.3' ], special: 'При сумме ≥250 тыс. руб. по бездоговорному — копии актов в департамент безопасности ИА для подготовки заявлений (Прил. 15)', responsible: 'Подразделение безопасности', deadline: 'См. сроки выше' } },
+
         { id: 'operational-control', title: 'ОПЕРАТИВНЫЙ КОНТРОЛЬ', content: { steps: [ 'Все акты заносятся в ПК «1С:Энергетика» (контроль полноты/сроков — руководитель РЭС/СРУ ФЭС)', 'Ежемесячно — формы (Прил. 9–12) в Excel + скан свода по филиалу → УРУ департамента РУиУЭ ИА до 18 числа', 'Сверка отчётов с реестрами ЭСК (включения в полезный отпуск) и оплаченных актов по бездоговорному' ], reporting: [ 'Корректировки — в следующем периоде с пояснительной запиской', 'Стоимость безучётного — по единым (котловым) тарифам ДГРТ КК, действующим в периоде составления актов', 'П.5 отчёта по бездоговорному — заполняет СПСДФ (объём/стоимость без учёта поступившей оплаты)' ], storage: [ 'Журналы — пронумерованы, прошнурованы, скреплены печатью; хранение 5 лет', 'Скан‑копии актов — 5 лет (или до полной оплаты)' ], responsible: 'СРУ, руководители РЭС/ФЭС', deadline: 'До 18 числа месяца, следующего за отчётным' } },
+
         { id: 'acts-lifecycle', title: 'ПОЛУЧЕНИЕ / УЧЁТ / ХРАНЕНИЕ / СПИСАНИЕ АКТОВ', content: { steps: [ 'Назначить распоряжением ответственных за учёт/движение/хранение актов в СУЭ, СРУ, УРРУ', 'Вести журналы учёта бланков/актов (Прил. 16; Прил. 5–6): нумерация, прошивка, печать', 'Регистрация полученных комплектов бланков по филиалу и на участках; выдача линейному персоналу под подпись', 'Ежесменно сдавать оформленные акты с фото/видео материалами ответственному лицу', 'Проверка комплектности, организация хранения медиа, передача на расчёт объёма', 'Доработка при недостатках; списание испорченных/утраченных бланков по объяснительной и результатам разбирательства' ], timing: [ 'Заявки УРРУ на отключение бездоговорных объектов → начальнику РЭС — в 1 р.д.; введение полного ограничения — в 1 р.д.; возврат исполненных заявок — в 1 р.д.' ], storage: [ 'Акты и заявки хранятся совместно; сканы и журналы — 5 лет' ], responsible: 'Ответственные СУЭ/СРУ/УРРУ/РЭС', deadline: 'Оперативные сроки см. в шагах' } },
-        { id: 'acts-flow', title: 'ОБОРОТ АКТОВ / КОМИССИИ / РЕЕСТРЫ', content: { steps: [ 'Назначить ответственных за предварительные расчёты по актам в ФЭС/УРРУ', 'Определить места и сроки хранения актов (сканы + материалы пломб/ЗВК, фото/видео)', 'Создать Комиссии (УРРУ/ФЭС), вести протоколы', 'Скан‑копии актов: по неучётному — хранение в УРРУ (или ФЭС по своей зоне); по бездоговорному — в УРРУ/ФЭС и СПСДФ/бухгалтерии', 'Отдел экономики ФЭС — до 7 числа предоставляет реестр поступивших средств по бездоговорному (Прил. 4)' ], reporting: [ 'В сводную таблицу "\\\\File-srv-1\\неучтенное потребление электроэнергии" — внесение каждого события по акту в 1 р.д. ответственным исполнителем' ], responsible: 'СРУ, УРРУ, ФЭС, СПСДФ, безопасность', deadline: 'Согласно регламентным срокам' } },
+
+        { id: 'acts-flow', title: 'ОБОРОТ АКТОВ / КОМИССИИ / РЕЕСТРЫ', content: { steps: [ 'Назначить ответственных за предварительные расчёты по актам в ФЭС/УРРУ', 'Определить места и сроки хранения актов (сканы + материалы пломб/ЗВК, фото/видео)', 'Создать Комиссии (УРРУ/ФЭС), вести протоколы', 'Скан‑копии актов: по неучётному — хранение в УРРУ (или ФЭС по своей зоне); по бездоговорному — в УРРУ/ФЭС и СПСДФ/бухгалтерии', 'Отдел экономики ФЭС — до 7 числа предоставляет реестр поступивших средств по бездоговорному (Прил. 4)' ], reporting: [ 'В сводную таблицу «\\\\File-srv-1\\неучтенное потребление электроэнергии» — внесение каждого события по акту в 1 р.д. ответственным исполнителем' ], responsible: 'СРУ, УРРУ, ФЭС, СПСДФ, безопасность', deadline: 'Согласно регламентным срокам' } },
+
         { id: 'common-schemes', title: 'ТИПОВЫЕ СПОСОБЫ НЕУЧЁТНОГО ПОТРЕБЛЕНИЯ', content: { actions: [ { text: 'Чек‑лист квалификации нарушений', list: [ 'Самовольные подключения к объектам электросетевого хозяйства', 'Повторные подключения после ограничения', 'Потребление без договора', 'Индикатор/магнит (АМ‑пломба), фальсификация пломб', 'Скрытая проводка в обход счётчика, «перемычки»', 'Механическое воздействие на ПУ, повреждения корпуса/стекла', 'Отсутствие ранее допущенного ПУ', 'Нарушение целостности/отсутствие пломб (вводной аппарат, ТТ/ТН и т.п.)', 'Отсутствие пломбы поверителя/клейма', 'Встроенные элементы, не предусмотренные изготовителем' ] } ], responsible: 'Персонал РЭС/УРРУ/СУЭ', deadline: 'При каждом выявлении' } }
       ]
     };
 
     let expandedSections = new Set();
+    let currentTheme = 'default';
 
-    /* ======= Поиск и подсветка ======= */
-    function normalizeStr(s){ return String(s).toLowerCase().replace(/ё/g,'е').replace(/[\s._(),\-–—\[\]{}:;!?"'`~+/\\]+/g,' ').replace(/\s+/g,' ').trim(); }
-    function searchInObject(obj, termNorm){ for (let k in obj){ if(!Object.prototype.hasOwnProperty.call(obj,k)) continue; const v=obj[k]; if(typeof v==='string'){ if(normalizeStr(v).includes(termNorm)) return true; } else if(Array.isArray(v)){ for(const it of v){ if(typeof it==='string'){ if(normalizeStr(it).includes(termNorm)) return true; } else if(it && typeof it==='object' && searchInObject(it,termNorm)) return true; } } else if(v && typeof v==='object'){ if(searchInObject(v,termNorm)) return true; } } return false; }
+    // ======= Нормализация строк для поиска =======
+    function normalizeStr(s){
+      return String(s)
+        .toLowerCase()
+        .replace(/ё/g,'е')
+        .replace(/[\s._(),\-–—\[\]{}:;!?"'`~+/\\]+/g,' ')
+        .replace(/\s+/g,' ')
+        .trim();
+    }
+
+    // ======= Поиск по объекту =======
+    function searchInObject(obj, termNorm){
+      for (let key in obj){
+        if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+        const value = obj[key];
+        if (typeof value === 'string'){
+          if (normalizeStr(value).includes(termNorm)) return true;
+        } else if (Array.isArray(value)){
+          for (let item of value){
+            if (typeof item === 'string') { if (normalizeStr(item).includes(termNorm)) return true; }
+            else if (item && typeof item === 'object' && searchInObject(item, termNorm)) return true;
+          }
+        } else if (value && typeof value === 'object'){
+          if (searchInObject(value, termNorm)) return true;
+        }
+      }
+      return false;
+    }
+
+    // ======= Экранирование и подсветка =======
     function escapeRegExp(str){ return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') }
-    function highlightText(text, searchTerm){ if(!searchTerm||text==null||typeof text!=='string') return text; const pattern=escapeRegExp(searchTerm); if(!pattern) return text; const regex=new RegExp(`(${pattern})`,'giu'); return text.replace(regex,'<span class="highlight">$1<\/span>'); }
+    function highlightText(text, searchTerm){
+      if (!searchTerm || text == null || typeof text !== 'string') return text;
+      const pattern = escapeRegExp(searchTerm);
+      if (!pattern) return text;
+      const regex = new RegExp(`(${pattern})`, 'giu');
+      return text.replace(regex, '<span class="highlight">$1<\/span>');
+    }
 
-    /* ======= Рендер ======= */
     function renderContent(){
-      const container=document.getElementById('contentContainer');
-      const selected=document.getElementById('reglamentSelect').value;
-      const rawInput=document.getElementById('searchInput').value||'';
-      const normTerm=normalizeStr(rawInput);
-      const rawTerm=rawInput.trim();
-      document.getElementById('clearSearch').style.display=rawTerm?'block':'none';
-      container.innerHTML='';
-      if(!algorithms[selected]){ container.innerHTML='<div class="no-results">Регламент не найден<\/div>'; updateCollapseBtnVisibility(); return; }
-      let list=algorithms[selected];
-      if(normTerm){ list=list.filter(a=>searchInObject(a,normTerm)); }
-      if(list.length===0){ container.innerHTML='<div class="no-results">По вашему запросу ничего не найдено<\/div>'; updateCollapseBtnVisibility(); return; }
-      list.forEach(a=>container.appendChild(createSection(a,rawTerm)));
-      updateCollapseBtnVisibility();
+      const container = document.getElementById('contentContainer');
+      const selectedReglament = document.getElementById('reglamentSelect').value;
+      const rawInput = document.getElementById('searchInput').value || '';
+      const normTerm = normalizeStr(rawInput);
+      const rawTerm = rawInput.trim();
+
+      const clearBtn = document.getElementById('clearSearch');
+      clearBtn.style.display = rawTerm ? 'block' : 'none';
+
+      container.innerHTML = '';
+      if (!algorithms[selectedReglament]){ container.innerHTML = '<div class="no-results">Регламент не найден<\/div>'; return; }
+
+      let list = algorithms[selectedReglament];
+      if (normTerm){ list = list.filter(algo => searchInObject(algo, normTerm)); }
+      if (list.length === 0){ container.innerHTML = '<div class="no-results">По вашему запросу ничего не найдено<\/div>'; return; }
+
+      list.forEach(algo => container.appendChild(createSection(algo, rawTerm)));
     }
 
     function createSection(algo, rawTerm){
-      const card=document.createElement('div'); card.className='section-card';
-      const header=document.createElement('div'); header.className='section-header'; header.onclick=()=>toggleSection(algo.id);
-      const title=document.createElement('div'); title.className='section-title'; title.innerHTML=highlightText(algo.title,rawTerm);
-      const arrow=document.createElement('div'); arrow.className='section-arrow'; arrow.innerHTML='▼'; if(expandedSections.has(algo.id)) arrow.classList.add('expanded');
-      header.appendChild(title); header.appendChild(arrow);
-      const content=document.createElement('div'); content.className='section-content'; content.id=`content-${algo.id}`; if(expandedSections.has(algo.id)) content.classList.add('expanded');
+      const card = document.createElement('div'); 
+      card.className = 'section-card';
 
-      if(algo.content.steps) content.appendChild(createBlock('Порядок действий:', algo.content.steps, rawTerm, true));
-      if(algo.content.actions){ algo.content.actions.forEach(action=>{ const d=document.createElement('div'); d.className='algorithm-block'; d.innerHTML=`<h4>${highlightText(action.text,rawTerm)}<\/h4>`; if(action.list){ const ul=document.createElement('ul'); action.list.forEach(it=>{ const li=document.createElement('li'); li.innerHTML=highlightText(it,rawTerm); ul.appendChild(li); }); d.appendChild(ul);} content.appendChild(d); }); }
-      if(algo.content.keyPoints) content.appendChild(createBlock('Ключевые моменты:', algo.content.keyPoints, rawTerm));
-      if(algo.content.riskCriteria) content.appendChild(createBlock('Критерии группы риска:', algo.content.riskCriteria, rawTerm));
-      if(algo.content.raids){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Рейды:<\/h4><p>${highlightText(algo.content.raids, rawTerm)}<\/p>`; content.appendChild(b);} 
-      if(algo.content.period){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Период расчёта:<\/h4><p>${highlightText(algo.content.period, rawTerm)}<\/p>`; content.appendChild(b);} 
-      if(algo.content.periodDetails){ const b=document.createElement('div'); b.className='algorithm-block'; const ul=document.createElement('ul'); algo.content.periodDetails.forEach(det=>{ const li=document.createElement('li'); li.innerHTML=`<strong>${highlightText(det.title,rawTerm)}<\/strong> ${highlightText(det.text,rawTerm)}`; ul.appendChild(li); }); b.appendChild(ul); content.appendChild(b);} 
-      if(algo.content.formulas){ algo.content.formulas.forEach(f=>{ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>${f.title}<\/h4>`; if(f.formula) b.innerHTML+=`<p><code>${f.formula}<\/code><\/p>`; if(f.list){ const ul=document.createElement('ul'); f.list.forEach(it=>{ const li=document.createElement('li'); li.innerHTML=`<code>${it}<\/code>`; ul.appendChild(li); }); b.appendChild(ul);} content.appendChild(b); }); }
-      if(algo.content.parameters) content.appendChild(createBlock('Параметры:', algo.content.parameters, rawTerm));
-      if(algo.content.sources) content.appendChild(createBlock('Источники информации:', algo.content.sources, rawTerm));
-      if(algo.content.unauthorizedConnection) content.appendChild(createBlock('При несанкционированном подключении (п.62 ПП РФ №354):', algo.content.unauthorizedConnection, rawTerm));
-      if(algo.content.meterIntervention) content.appendChild(createBlock('При вмешательстве в ПУ (п.81(11) ПП РФ №354):', algo.content.meterIntervention, rawTerm));
-      if(algo.content.nonAdmission) content.appendChild(createBlock('При недопуске:', algo.content.nonAdmission, rawTerm));
-      if(algo.content.pricing) content.appendChild(createBlock('Стоимость:', algo.content.pricing, rawTerm));
-      if(algo.content.important){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4 style=\"color:#b91c1c;\">Важно:<\/h4><p><strong>${highlightText(algo.content.important, rawTerm)}<\/strong><\/p>`; content.appendChild(b);} 
-      if(algo.content.recalculation) content.appendChild(createBlock('Перерасчёт:', algo.content.recalculation, rawTerm));
-      if(algo.content.composition) content.appendChild(createBlock('Состав:', algo.content.composition, rawTerm));
-      if(algo.content.tasks) content.appendChild(createBlock('Задачи комиссии:', algo.content.tasks, rawTerm));
-      if(algo.content.timing) content.appendChild(createBlock('Сроки:', algo.content.timing, rawTerm));
-      if(algo.content.structure) content.appendChild(createBlock('Структура комиссий:', algo.content.structure, rawTerm));
-      if(algo.content.consultations){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Консультации:<\/h4><p>${highlightText(algo.content.consultations, rawTerm)}<\/p>`; content.appendChild(b);} 
-      if(algo.content.documents && typeof algo.content.documents==='string'){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Документы:<\/h4><p>${highlightText(algo.content.documents, rawTerm)}<\/p>`; content.appendChild(b);} 
-      if(algo.content.deadlines) content.appendChild(createBlock('Сроки:', algo.content.deadlines, rawTerm));
-      if(algo.content.nonPayment) content.appendChild(createBlock('При неоплате:', algo.content.nonPayment, rawTerm));
-      if(algo.content.documents && Array.isArray(algo.content.documents)) content.appendChild(createBlock('Документы для СПСДФ:', algo.content.documents, rawTerm));
-      if(algo.content.forms) content.appendChild(createBlock('Формы заявлений:', algo.content.forms, rawTerm));
-      if(algo.content.reporting) content.appendChild(createBlock('Отчётность:', algo.content.reporting, rawTerm));
-      if(algo.content.storage) content.appendChild(createBlock('Хранение:', algo.content.storage, rawTerm));
-      if(algo.content.special){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Особый порядок:<\/h4><p>${highlightText(algo.content.special, rawTerm)}<\/p>`; content.appendChild(b);} 
-      if(algo.content.correction){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Корректировка:<\/h4><p>${highlightText(algo.content.correction, rawTerm)}<\/p>`; content.appendChild(b);} 
-      if(algo.content.control){ const b=document.createElement('div'); b.className='algorithm-block'; b.innerHTML=`<h4>Контроль:<\/h4><p>${highlightText(algo.content.control, rawTerm)}<\/p>`; content.appendChild(b);} 
+      const header = document.createElement('div'); 
+      header.className = 'section-header'; 
+      header.onclick = () => toggleSection(algo.id);
 
-      const footer=document.createElement('div'); footer.className='algorithm-block';
-      if(algo.content.responsible) footer.innerHTML+=`<p><strong>Ответственный:<\/strong> ${highlightText(algo.content.responsible, rawTerm)}<\/p>`;
-      if(algo.content.deadline) footer.innerHTML+=`<p><strong>Срок:<\/strong> ${highlightText(algo.content.deadline, rawTerm)}<\/p>`;
-      if(footer.innerHTML) content.appendChild(footer);
+      const title = document.createElement('div'); 
+      title.className = 'section-title'; 
+      title.innerHTML = highlightText(algo.title, rawTerm);
 
-      const buttons=document.createElement('div'); buttons.className='action-buttons';
-      const attachBtn=document.createElement('button'); attachBtn.className='action-btn btn-success'; attachBtn.innerHTML='📎 Загрузить'; attachBtn.onclick=()=>alert('Функция загрузки приложений будет добавлена позже');
-      const openBtn=document.createElement('button'); openBtn.className='action-btn btn-primary'; openBtn.innerHTML='📄 Документ'; openBtn.onclick=()=>openSourceDocument(algo.id);
-      const collapseBtn=document.createElement('button'); collapseBtn.className='action-btn btn-secondary'; collapseBtn.innerHTML='↥ Свернуть'; collapseBtn.onclick=()=>toggleSection(algo.id);
-      buttons.appendChild(attachBtn); buttons.appendChild(openBtn); buttons.appendChild(collapseBtn); content.appendChild(buttons);
+      const arrow = document.createElement('div'); 
+      arrow.className = 'section-arrow'; 
+      arrow.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'; 
+      if (expandedSections.has(algo.id)) arrow.classList.add('expanded');
+
+      header.appendChild(title); 
+      header.appendChild(arrow);
+
+      const content = document.createElement('div'); 
+      content.className = 'section-content'; 
+      content.id = `content-${algo.id}`; 
+      if (expandedSections.has(algo.id)) content.classList.add('expanded');
+
+      if (algo.content.steps) content.appendChild(createBlock('Порядок действий:', algo.content.steps, rawTerm, true));
+
+      if (algo.content.actions){
+        algo.content.actions.forEach(action => {
+          const actionDiv = document.createElement('div'); actionDiv.className = 'algorithm-block';
+          actionDiv.innerHTML = `<h4>${highlightText(action.text, rawTerm)}<\/h4>`;
+          if (action.list){ const ul = document.createElement('ul'); action.list.forEach(item => { const li = document.createElement('li'); li.innerHTML = highlightText(item, rawTerm); ul.appendChild(li); }); actionDiv.appendChild(ul); }
+          content.appendChild(actionDiv);
+        });
+      }
+
+      if (algo.content.keyPoints) content.appendChild(createBlock('Ключевые моменты:', algo.content.keyPoints, rawTerm));
+      if (algo.content.riskCriteria) content.appendChild(createBlock('Критерии группы риска:', algo.content.riskCriteria, rawTerm));
+      if (algo.content.raids){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Рейды:<\/h4><p>${highlightText(algo.content.raids, rawTerm)}<\/p>`; content.appendChild(b); }
+      if (algo.content.period){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Период расчёта:<\/h4><p>${highlightText(algo.content.period, rawTerm)}<\/p>`; content.appendChild(b); }
+
+      if (algo.content.periodDetails) {
+        const b = document.createElement('div'); 
+        b.className = 'algorithm-block';
+        const ul = document.createElement('ul');
+        algo.content.periodDetails.forEach(detail => {
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${highlightText(detail.title, rawTerm)}</strong> ${highlightText(detail.text, rawTerm)}`;
+          ul.appendChild(li);
+        });
+        b.appendChild(ul);
+        content.appendChild(b);
+      }
+      
+      if (algo.content.formulas){
+        algo.content.formulas.forEach(f => {
+          const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>${f.title}<\/h4>`;
+          if (f.formula) b.innerHTML += `<p><code>${f.formula}<\/code><\/p>`;
+          if (f.list){ const ul = document.createElement('ul'); f.list.forEach(item => { const li = document.createElement('li'); li.innerHTML = `<code>${item}<\/code>`; ul.appendChild(li); }); b.appendChild(ul); }
+          content.appendChild(b);
+        });
+      }
+
+      if (algo.content.parameters) content.appendChild(createBlock('Параметры:', algo.content.parameters, rawTerm));
+      if (algo.content.sources) content.appendChild(createBlock('Источники информации:', algo.content.sources, rawTerm));
+      if (algo.content.unauthorizedConnection) content.appendChild(createBlock('При несанкционированном подключении (п.62 ПП РФ №354):', algo.content.unauthorizedConnection, rawTerm));
+      if (algo.content.meterIntervention) content.appendChild(createBlock('При вмешательстве в ПУ (п.81(11) ПП РФ №354):', algo.content.meterIntervention, rawTerm));
+      if (algo.content.nonAdmission) content.appendChild(createBlock('При недопуске:', algo.content.nonAdmission, rawTerm));
+      if (algo.content.pricing) content.appendChild(createBlock('Стоимость:', algo.content.pricing, rawTerm));
+      if (algo.content.important){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4 style=\"color:var(--secondary);\">Важно:<\/h4><p><strong>${highlightText(algo.content.important, rawTerm)}<\/strong><\/p>`; content.appendChild(b); }
+      if (algo.content.overview){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Общие положения:<\/h4><p>${highlightText(algo.content.overview, rawTerm)}<\/p>`; content.appendChild(b); }
+      if (algo.content.structure) content.appendChild(createBlock('Структура комиссий:', algo.content.structure, rawTerm));
+      if (algo.content.tasks) content.appendChild(createBlock('Задачи комиссии:', algo.content.tasks, rawTerm));
+      if (algo.content.timing) content.appendChild(createBlock('Сроки:', algo.content.timing, rawTerm));
+      if (algo.content.deadlines) content.appendChild(createBlock('Сроки:', algo.content.deadlines, rawTerm));
+      if (algo.content.nonPayment) content.appendChild(createBlock('При неоплате:', algo.content.nonPayment, rawTerm));
+      if (algo.content.documents && Array.isArray(algo.content.documents)) content.appendChild(createBlock('Документы для СПСДФ:', algo.content.documents, rawTerm));
+      if (algo.content.forms) content.appendChild(createBlock('Формы заявлений:', algo.content.forms, rawTerm));
+      if (algo.content.reporting) content.appendChild(createBlock('Отчётность:', algo.content.reporting, rawTerm));
+      if (algo.content.storage) content.appendChild(createBlock('Хранение:', algo.content.storage, rawTerm));
+      if (algo.content.special){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Особый порядок:<\/h4><p>${highlightText(algo.content.special, rawTerm)}<\/p>`; content.appendChild(b); }
+      if (algo.content.correction){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Корректировка:<\/h4><p>${highlightText(algo.content.correction, rawTerm)}<\/p>`; content.appendChild(b); }
+      if (algo.content.control){ const b = document.createElement('div'); b.className = 'algorithm-block'; b.innerHTML = `<h4>Контроль:<\/h4><p>${highlightText(algo.content.control, rawTerm)}<\/p>`; content.appendChild(b); }
+
+      const footer = document.createElement('div'); footer.className = 'algorithm-block';
+      if (algo.content.responsible) footer.innerHTML += `<p><strong>Ответственный:<\/strong> ${highlightText(algo.content.responsible, rawTerm)}<\/p>`;
+      if (algo.content.deadline) footer.innerHTML += `<p><strong>Срок:<\/strong> ${highlightText(algo.content.deadline, rawTerm)}<\/p>`;
+      if (footer.innerHTML) content.appendChild(footer);
+
+      const buttons = document.createElement('div'); buttons.className = 'action-buttons';
+      const attachBtn = document.createElement('button'); attachBtn.className = 'action-btn btn-action-secondary'; attachBtn.innerHTML = '📎 Загрузить'; attachBtn.onclick = () => alert('Функция загрузки документов будет добавлена в следующей версии');
+      const openBtn = document.createElement('button'); openBtn.className = 'action-btn btn-action-primary'; openBtn.innerHTML = '📄 Документ'; openBtn.onclick = () => openSourceDocument(algo.id);
+      const collapseBtn = document.createElement('button'); collapseBtn.className = 'action-btn btn-action-secondary'; collapseBtn.innerHTML = '↥ Свернуть'; collapseBtn.onclick = () => toggleSection(algo.id);
+      buttons.appendChild(attachBtn); buttons.appendChild(openBtn); buttons.appendChild(collapseBtn);
+      content.appendChild(buttons);
 
       card.appendChild(header); card.appendChild(content); return card;
     }
 
-    function createBlock(title, items, rawTerm, ordered=false){ const block=document.createElement('div'); block.className='algorithm-block'; block.innerHTML=`<h4>${title}<\/h4>`; const list=ordered?document.createElement('ol'):document.createElement('ul'); items.forEach(it=>{ const li=document.createElement('li'); li.innerHTML=highlightText(it,rawTerm); list.appendChild(li); }); block.appendChild(list); return block; }
+    function createBlock(title, items, rawTerm, ordered=false){
+      const block = document.createElement('div'); block.className = 'algorithm-block'; block.innerHTML = `<h4>${title}<\/h4>`;
+      const list = ordered ? document.createElement('ol') : document.createElement('ul');
+      items.forEach(item=>{ const li = document.createElement('li'); li.innerHTML = highlightText(item, rawTerm); list.appendChild(li); });
+      block.appendChild(list); return block;
+    }
 
-    function toggleSection(id){ const content=document.getElementById(`content-${id}`); const arrow=content.previousElementSibling.querySelector('.section-arrow'); if(expandedSections.has(id)){ expandedSections.delete(id); content.classList.remove('expanded'); arrow.classList.remove('expanded'); } else { expandedSections.add(id); content.classList.add('expanded'); arrow.classList.add('expanded'); } updateCollapseBtnVisibility(); }
-    function collapseAllSections(){ document.querySelectorAll('.section-content.expanded').forEach(el=>{ el.classList.remove('expanded'); const arrow=el.previousElementSibling.querySelector('.section-arrow'); if(arrow) arrow.classList.remove('expanded'); }); expandedSections.clear(); updateCollapseBtnVisibility(); }
+    function toggleSection(sectionId){
+      const content = document.getElementById(`content-${sectionId}`); 
+      const arrow = content.previousElementSibling.querySelector('.section-arrow');
+      if (expandedSections.has(sectionId)){ 
+        expandedSections.delete(sectionId); 
+        content.classList.remove('expanded'); 
+        arrow.classList.remove('expanded'); 
+      } else { 
+        expandedSections.add(sectionId); 
+        content.classList.add('expanded'); 
+        arrow.classList.add('expanded'); 
+      }
+      updateCollapseButton();
+    }
 
-    /* ======= Фикс открытия PDF для GitHub Pages и превью ======= */
-    function buildDocUrl(docUrl){ if(/^https?:\/\//i.test(docUrl)) return docUrl; const {origin, pathname}=location; const basePath=pathname.replace(/\/[^\/]*$/,''); if(docUrl.startsWith('/')) return origin + basePath + docUrl; return origin + basePath + '/' + docUrl; }
-    function openSourceDocument(sectionId){ const selected=document.getElementById('reglamentSelect').value; const navMap=(window.navigationMaps||{})[selected]; if(!navMap||!navMap.sections||!navMap.sections[sectionId]){ alert('Раздел не найден в навигационной карте'); return; } const page=navMap.sections[sectionId].page; const pdfUrl=buildDocUrl(navMap.docUrl)+`#page=${page}`; const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent); if(isMobile){ const modal=document.getElementById('sourceModal'); const sourceText=document.getElementById('sourceText'); sourceText.innerHTML=`<div style="text-align:center;padding:20px;"><h3 style="color: var(--brand-700); margin-bottom:1rem;">Раздел ${navMap.sections[sectionId].section||page}</h3><p style="margin-bottom:1.5rem;">Откройте документ и перейдите на страницу <strong>${page}</strong></p><a href="${buildDocUrl(navMap.docUrl)}" class="action-btn btn-primary" style="display:inline-block;text-decoration:none;padding:.75rem 1.5rem;">Скачать PDF</a><button onclick="window.open('${buildDocUrl(navMap.docUrl)}','_blank')" class="action-btn btn-primary" style="margin-left:1rem;padding:.75rem 1.5rem;">Открыть PDF</button></div>`; modal.style.display='block'; } else { window.open(pdfUrl,'_blank'); } }
+    function collapseAll(){
+      expandedSections.clear();
+      document.querySelectorAll('.section-content').forEach(content => {
+        content.classList.remove('expanded');
+      });
+      document.querySelectorAll('.section-arrow').forEach(arrow => {
+        arrow.classList.remove('expanded');
+      });
+      updateCollapseButton();
+    }
 
-    /* ======= Бегущая строка селекта ======= */
-    function updateSelectMarquee(){ const select=document.getElementById('reglamentSelect'); const marquee=document.getElementById('selectMarquee'); const text=select.options[select.selectedIndex]?.text||''; const measurer=document.createElement('span'); measurer.style.visibility='hidden'; measurer.style.position='absolute'; measurer.style.whiteSpace='nowrap'; measurer.style.font=getComputedStyle(select).font; measurer.textContent=text; document.body.appendChild(measurer); const visibleWidth=select.clientWidth-28; const overflow=measurer.getBoundingClientRect().width>visibleWidth; document.body.removeChild(measurer); if(overflow){ marquee.style.display='block'; select.classList.add('marquee-active'); marquee.innerHTML=`<span class="marquee-track">${text}&nbsp;&nbsp;•&nbsp;&nbsp;${text}</span>`; } else { marquee.style.display='none'; select.classList.remove('marquee-active'); marquee.innerHTML=''; } }
+    function expandAll(){
+      const selectedReglament = document.getElementById('reglamentSelect').value;
+      if (algorithms[selectedReglament]){
+        algorithms[selectedReglament].forEach(algo => {
+          expandedSections.add(algo.id);
+        });
+        document.querySelectorAll('.section-content').forEach(content => {
+          content.classList.add('expanded');
+        });
+        document.querySelectorAll('.section-arrow').forEach(arrow => {
+          arrow.classList.add('expanded');
+        });
+      }
+      updateCollapseButton();
+    }
 
-    /* ======= Плавающие кнопки ======= */
-    function updateFloatingByScroll(){ const show=window.pageYOffset>300; document.getElementById('scrollTopBtn').style.display=show?'flex':'none'; updateCollapseBtnVisibility(); }
-    function updateCollapseBtnVisibility(){ const btn=document.getElementById('collapseAllBtn'); const any=expandedSections.size>0; const scrolled=window.pageYOffset>300; btn.style.display=(any&&scrolled)?'flex':'none'; }
+    function updateCollapseButton(){
+      const collapseBtn = document.getElementById('collapseAllBtn');
+      const expandBtn = document.getElementById('expandAllBtn');
+      if (expandedSections.size > 0){
+        collapseBtn.style.display = 'inline-flex';
+        expandBtn.style.display = 'none';
+      } else {
+        collapseBtn.style.display = 'none';
+        expandBtn.style.display = 'inline-flex';
+      }
+    }
 
-    /* ======= Переключение темы + сохранение ======= */
-    function setTheme(name){ document.documentElement.setAttribute('data-theme', name); localStorage.setItem('theme', name); document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active', b.dataset.theme===name)); }
+    function openSourceDocument(sectionId) {
+      const selectedReglament = document.getElementById('reglamentSelect').value;
+      const navMap = navigationMaps[selectedReglament];
+      if (!navMap || !navMap.sections[sectionId]) { alert('Раздел не найден в навигационной карте'); return; }
+      const page = navMap.sections[sectionId].page;
+      const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+      const pdfUrl = `${baseUrl}${navMap.docUrl}#page=${page}`;
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        const modal = document.getElementById('sourceModal');
+        const sourceText = document.getElementById('sourceText');
+        sourceText.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">Раздел ${navMap.sections[sectionId].section || page}</h3>
+                <p style="margin-bottom: 1.5rem;">Откройте документ и перейдите на страницу <strong>${page}</strong></p>
+                <a href="${baseUrl}${navMap.docUrl}" class="action-btn btn-action-primary" style="display: inline-block; text-decoration: none; padding: 0.75rem 1.5rem;">Скачать PDF</a>
+                <button onclick="window.open('${baseUrl}${navMap.docUrl}', '_blank')" class="action-btn btn-action-primary" style="margin-left: 1rem; padding: 0.75rem 1.5rem;">Открыть PDF</button>
+            </div>
+        `;
+        modal.style.display = 'block';
+      } else {
+        window.open(pdfUrl, '_blank');
+      }
+    }
+
+    function switchTheme(theme){
+      document.body.setAttribute('data-theme', theme);
+      currentTheme = theme;
+      
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`.theme-btn[data-theme="${theme}"]`).classList.add('active');
+      
+      localStorage.setItem('selectedTheme', theme);
+    }
 
     // Listeners
-    document.querySelectorAll('.theme-btn').forEach(b=>b.addEventListener('click', ()=>setTheme(b.dataset.theme)));
-    document.getElementById('reglamentSelect').addEventListener('change', ()=>{ renderContent(); updateSelectMarquee(); });
+    document.getElementById('reglamentSelect').addEventListener('change', renderContent);
     document.getElementById('searchInput').addEventListener('input', renderContent);
-    document.getElementById('clearSearch').addEventListener('click', ()=>{ const i=document.getElementById('searchInput'); i.value=''; i.focus(); renderContent(); });
-    document.getElementById('scrollTopBtn').addEventListener('click', ()=>window.scrollTo({ top:0, behavior:'smooth' }));
-    document.getElementById('collapseAllBtn').addEventListener('click', collapseAllSections);
-    document.querySelector('.close-modal').addEventListener('click', ()=>document.getElementById('sourceModal').style.display='none');
-    window.addEventListener('click', e=>{ const m=document.getElementById('sourceModal'); if(e.target===m) m.style.display='none'; });
-    window.addEventListener('scroll', updateFloatingByScroll);
-    window.addEventListener('resize', updateSelectMarquee);
+    document.getElementById('clearSearch').addEventListener('click', () => { 
+      const i = document.getElementById('searchInput'); 
+      i.value = ''; 
+      i.focus(); 
+      renderContent(); 
+    });
+    document.getElementById('collapseAllBtn').addEventListener('click', collapseAll);
+    document.getElementById('expandAllBtn').addEventListener('click', expandAll);
+    document.getElementById('scrollTopBtn').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    document.querySelector('.close-modal').addEventListener('click', () => document.getElementById('sourceModal').style.display = 'none');
+    window.addEventListener('click', (e) => { 
+      const m = document.getElementById('sourceModal'); 
+      if (e.target === m) m.style.display = 'none'; 
+    });
+    window.addEventListener('scroll', () => { 
+      const b = document.getElementById('scrollTopBtn'); 
+      b.style.display = window.pageYOffset > 300 ? 'flex' : 'none'; 
+    });
 
-    // Тесты
-    function runSearchTests(){ const t1=algorithms['r057-2022'].some(a=>searchInObject(a, normalizeStr('физ'))); console.assert(t1,'Поиск по "физ" должен находить раздел(ы).'); const t2=algorithms['r057-2022'].some(a=>searchInObject(a, normalizeStr('рску'))||searchInObject(a, normalizeStr('рск'))); console.assert(t2,'Поиск по "РСК" должен находить упоминания.'); const t3=algorithms['r057-2022'].some(a=>searchInObject(a, normalizeStr('ФИЗ'))); console.assert(t3,'Поиск по "ФИЗ" должен находить раздел(ы).'); }
+    // Горячие клавиши
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+      }
+    });
 
-    // init
-    renderContent(); runSearchTests(); updateSelectMarquee(); updateFloatingByScroll();
-    // восстановить тему
-    const saved=localStorage.getItem('theme'); if(saved) setTheme(saved);
+    // Переключатель тем
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchTheme(btn.getAttribute('data-theme'));
+      });
+    });
+
+    // Загрузка сохраненной темы
+    const savedTheme = localStorage.getItem('selectedTheme') || 'default';
+    switchTheme(savedTheme);
+
+    renderContent();
+    updateCollapseButton();
   </script>
 </body>
 </html>
